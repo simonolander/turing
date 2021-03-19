@@ -5,25 +5,26 @@ import Turing.Data.Tape as Tape
 import Turing.Data.Card as Card
 import Data.Map as Map
 import Data.Maybe
+import Turing.Optics
 
 data SubState
     = Read
     | Write
-    | Move
-    | ChangeCard
+    | Move Boolean
+    | ChangeCard Boolean
 
 derive instance eqSubState :: Eq SubState
 
 instance showSubState :: Show SubState where
     show Read = "Read"
     show Write = "Write"
-    show Move = "Move"
-    show ChangeCard = "ChangeCard"
+    show (Move a) = "Move " <> show a
+    show (ChangeCard a) = "ChangeCard " <> show a
 
 type Machine =
     { tape :: Tape.Tape
     , position :: Int
-    , cards :: Map.Map Int Card.Card
+    , cards :: Map.Map String Card.Card
     , card :: Card.Card
     , subState :: SubState
     }
@@ -37,28 +38,25 @@ empty =
     , subState : Read
     }
 
-getSubState :: Machine -> SubState
-getSubState = _.subState
-
-advanceSubState :: Machine -> Machine
-advanceSubState machine =
-    case machine.subState of
-        Read -> machine { subState = Write }
-        Write ->
-            let
-                { tape, position, card } = machine
-                input = Map.lookup position tape
-                    # fromMaybe false
-                instruction =
-                    if input then
-                        card.trueInstruction
-                    else
-                        card.falseInstruction
-                output = instruction.output
-            in
-                machine
-                    { tape = Map.insert position output tape
-                    , subState = Move
-                    }
-        Move -> machine
-        ChangeCard -> machine
+subStep :: Machine -> Machine
+subStep machine =
+    let
+        { tape, position, card, cards, subState } = machine
+    in
+        case subState of
+            Read -> set _subState Write machine
+            Write ->
+                let
+                    input = view (at position) tape
+                        # fromMaybe false
+                    instruction =
+                        if input then
+                            card.trueInstruction
+                        else
+                            card.falseInstruction
+                    output = instruction.output
+                in
+                    machine
+                        # set _subState (Move input)
+                        # set (_tape <<< at position) (Just output)
+            _ -> machine

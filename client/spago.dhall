@@ -4,7 +4,14 @@ You can edit this file as you like.
 -}
 { name = "my-project"
 , dependencies =
-  [ "console", "effect", "halogen", "psci-support", "quickcheck", "test-unit" ]
+  [ "console"
+  , "effect"
+  , "halogen"
+  , "profunctor-lenses"
+  , "psci-support"
+  , "quickcheck"
+  , "test-unit"
+  ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
