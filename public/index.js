@@ -1,4 +1,4 @@
 /**
  * Used for development
  */
-require("../output/Main/index.js").main();
+require("../client/output/Main/index.js").main();
