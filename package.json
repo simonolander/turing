@@ -2,11 +2,11 @@
   "name": "turing",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "main": "dist/index.html",
   "scripts": {
     "test": "(cd client && npm run test)",
     "serve": "parcel public/index.html --open",
-    "build": "(cd client && npm run bundle) && rm -rf dist && mv client/index.js public/index.js && parcel build public/index.html && git checkout public/index.js",
+    "build": "(cd client && npm run bundle) && rm -rf dist && mv client/index.js public/index.js && parcel build public/index.html",
     "postinstall": "(cd client && npm install)"
   },
   "devDependencies": {
