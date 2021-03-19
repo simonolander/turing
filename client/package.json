@@ -7,8 +7,6 @@
   "scripts": {
     "build": "spago build",
     "test": "spago test",
-    "serve": "parcel dev/index.html --open",
-    "bundle": "rm -rf dist && spago bundle-app --to index.js",
-    "build-prod": "mkdir -p prod && cp dev/index.html prod/ && rm -rf dist && spago bundle-app --to prod/index.js && parcel build prod/index.html"
+    "bundle": "rm -rf dist && spago bundle-app --to index.js"
   }
 }
