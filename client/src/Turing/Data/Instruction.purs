@@ -4,7 +4,14 @@ import Prelude
 import Data.Maybe
 
 type Instruction =
-    { write :: Boolean
-    , move :: Boolean
-    , nextCard :: Maybe String
+    { output :: Boolean
+    , moveRight :: Boolean
+    , nextCardId :: Maybe String
+    }
+
+empty :: Instruction
+empty =
+    { output : false
+    , moveRight : false
+    , nextCardId : Nothing
     }

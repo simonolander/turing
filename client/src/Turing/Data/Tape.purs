@@ -1,6 +1,9 @@
 module Turing.Data.Tape where
 
 import Prelude
-import Data.Map
+import Data.Map as Map
 
-type Tape = Map Int Boolean
+type Tape = Map.Map Int Boolean
+
+empty :: Tape
+empty = Map.empty
