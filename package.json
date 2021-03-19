@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "(cd client && npm run test)",
-    "build": "echo 🔨",
+    "build": "(cd client && npm run bundle) && rm -rf dist && mv client/index.js public/index.js && parcel build public/index.html && git checkout public/index.js",
     "postinstall": "(cd client && npm install)"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.0-beta.2"
   },
   "repository": {
     "type": "git",
@@ -17,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/simonolander/turing/issues"
   },
-  "homepage": "https://github.com/simonolander/turing#readme"
+  "homepage": "https://github.com/simonolander/turing#readme",
+  "externals": {
+    "firebase/*": true
+  }
 }
