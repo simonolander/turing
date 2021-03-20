@@ -4,12 +4,15 @@ You can edit this file as you like.
 -}
 { name = "my-project"
 , dependencies =
-  [ "console"
+  [ "aff-bus"
+  , "console"
   , "effect"
   , "halogen"
   , "profunctor-lenses"
   , "psci-support"
   , "quickcheck"
+  , "routing"
+  , "routing-duplex"
   , "test-unit"
   ]
 , packages = ./packages.dhall
