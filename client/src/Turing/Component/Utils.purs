@@ -1,5 +1,5 @@
 -- | Some utilities are useful across any component. We'll maintain them in this catch-all module.
-module Turing.Component.Utils where
+module Conduit.Component.Utils where
 
 import Prelude
 
@@ -8,7 +8,7 @@ import Effect.Aff (error, forkAff, killFiber)
 import Effect.Aff.Bus as Bus
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
-import Halogen.Subscription as HS
+import Halogen.Query.EventSource as ES
 
 -- | When a component has no queries or messages, it has no public interface and can be
 -- | considered an "opaque" component. The only way for a parent to interact with the
@@ -41,8 +41,8 @@ type OpaqueSlot slot = forall query. H.Slot query Void slot
 -- |   HandleBus busMessage -> do
 -- |     ...
 -- | ```
---busEventSource :: forall m r act. MonadAff m => Bus.BusR' r act -> HS.EventSource m act
---busEventSource bus =
---  HS.affEventSource \emitter -> do
---    fiber <- forkAff $ forever $ HS.emit emitter =<< Bus.read bus
---    pure (HS.Finalizer (killFiber (error "Event source closed") fiber))
+busEventSource :: forall m r act. MonadAff m => Bus.BusR' r act -> ES.EventSource m act
+busEventSource bus =
+  ES.affEventSource \emitter -> do
+    fiber <- forkAff $ forever $ ES.emit emitter =<< Bus.read bus
+    pure (ES.Finalizer (killFiber (error "Event source closed") fiber))
