@@ -1,22 +1,22 @@
 -- | The settings page lets users change data about their account, like their email or password,
 -- | as well as their publicly-viewable profile information.
-module Conduit.Page.Settings where
+module Turing.Page.Settings where
 
 import Prelude
 
-import Conduit.Capability.Navigate (class Navigate, logout)
-import Conduit.Capability.Resource.User (class ManageUser, UpdateProfileFields, getCurrentUser, updateUser)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css)
-import Conduit.Data.Avatar (Avatar)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.Email (Email)
-import Conduit.Data.Profile (ProfileWithEmail)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username (Username)
-import Conduit.Data.Username as Username
-import Conduit.Form.Field as Field
-import Conduit.Form.Validation as V
+import Turing.Capability.Navigate (class Navigate, logout)
+import Turing.Capability.Resource.User (class ManageUser, UpdateProfileFields, getCurrentUser, updateUser)
+import Turing.Component.HTML.Header (header)
+import Turing.Component.HTML.Utils (css)
+import Turing.Data.Avatar (Avatar)
+import Turing.Data.Avatar as Avatar
+import Turing.Data.Email (Email)
+import Turing.Data.Profile (ProfileWithEmail)
+import Turing.Data.Route (Route(..))
+import Turing.Data.Username (Username)
+import Turing.Data.Username as Username
+import Turing.Form.Field as Field
+import Turing.Form.Validation as V
 import Data.Lens (preview)
 import Data.Maybe (Maybe(..))
 import Data.Maybe as Maybe

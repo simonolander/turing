@@ -8,31 +8,31 @@
 -- | For example, this monad will actually hit the server with API requests when we manage a
 -- | resource, but our test monad might just return mock JSON or error responses.
 -- |
--- | See the various `Conduit.Capability.*` modules for deeper explanations of each capability, and
+-- | See the various `Turing.Capability.*` modules for deeper explanations of each capability, and
 -- | the accompanying guide for a thorough introduction to this style of application architecture.
 -- |
 -- | https://thomashoneyman.com/guides/real-world-halogen
-module Conduit.AppM where
+module Turing.AppM where
 
 import Prelude
 
-import Conduit.Api.Endpoint (Endpoint(..), noArticleParams)
-import Conduit.Api.Request (RequestMethod(..))
-import Conduit.Api.Request as Request
-import Conduit.Api.Utils (authenticate, decode, decodeWithUser, mkAuthRequest, mkRequest)
-import Conduit.Capability.LogMessages (class LogMessages)
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Now (class Now)
-import Conduit.Capability.Resource.Article (class ManageArticle)
-import Conduit.Capability.Resource.Comment (class ManageComment)
-import Conduit.Capability.Resource.Tag (class ManageTag)
-import Conduit.Capability.Resource.User (class ManageUser)
-import Conduit.Data.Article as Article
-import Conduit.Data.Comment as Comment
-import Conduit.Data.Log as Log
-import Conduit.Data.Profile as Profile
-import Conduit.Data.Route as Route
-import Conduit.Env (Env, LogLevel(..))
+import Turing.Api.Endpoint (Endpoint(..), noArticleParams)
+import Turing.Api.Request (RequestMethod(..))
+import Turing.Api.Request as Request
+import Turing.Api.Utils (authenticate, decode, decodeWithUser, mkAuthRequest, mkRequest)
+import Turing.Capability.LogMessages (class LogMessages)
+import Turing.Capability.Navigate (class Navigate, navigate)
+import Turing.Capability.Now (class Now)
+import Turing.Capability.Resource.Article (class ManageArticle)
+import Turing.Capability.Resource.Comment (class ManageComment)
+import Turing.Capability.Resource.Tag (class ManageTag)
+import Turing.Capability.Resource.User (class ManageUser)
+import Turing.Data.Article as Article
+import Turing.Data.Comment as Comment
+import Turing.Data.Log as Log
+import Turing.Data.Profile as Profile
+import Turing.Data.Route as Route
+import Turing.Env (Env, LogLevel(..))
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, ask, asks, runReaderT)
 import Control.Parallel (class Parallel, parallel, sequential)
 import Data.Codec.Argonaut as CA
@@ -50,7 +50,7 @@ import Routing.Duplex (print)
 import Routing.Hash (setHash)
 import Type.Equality (class TypeEquals, from)
 
--- | In the capability modules (`Conduit.Capability.*`), we wrote some abstract, high-level
+-- | In the capability modules (`Turing.Capability.*`), we wrote some abstract, high-level
 -- | interfaces for business logic that tends to be highly effectful, like resource management and
 -- | logging. We wrote interfaces (just the types, no actual implementation) so that we could write
 -- | the same code once and swap in different implementations as we see fit.

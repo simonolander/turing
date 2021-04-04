@@ -5,9 +5,9 @@ module Component.HigherOrder.Connect where
 
 import Prelude
 
-import Conduit.Component.Utils (busEventSource)
-import Conduit.Data.Profile (Profile)
-import Conduit.Env (UserEnv)
+import Turing.Component.Utils (busEventSource)
+import Turing.Data.Profile (Profile)
+import Turing.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))

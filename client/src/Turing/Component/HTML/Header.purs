@@ -1,13 +1,13 @@
 -- | This module exports a pure HTML function to render a consistent header throughout the app.
-module Conduit.Component.HTML.Header where
+module Turing.Component.HTML.Header where
 
 import Prelude
 
-import Conduit.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.Profile (ProfileRep)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username as Username
+import Turing.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
+import Turing.Data.Avatar as Avatar
+import Turing.Data.Profile (ProfileRep)
+import Turing.Data.Route (Route(..))
+import Turing.Data.Username as Username
 import Data.Maybe (Maybe, isNothing, isJust)
 import Data.Monoid (guard)
 import Halogen.HTML as HH
@@ -27,7 +27,7 @@ header currentUser route =
         [ css "navbar-brand"
         , safeHref Home
         ]
-        [ HH.text "conduit" ]
+        [ HH.text "Turing" ]
       , HH.ul
         [ css "nav navbar-nav pull-xs-right" ]
         [ navItem Home

@@ -1,18 +1,18 @@
 -- | The login page supports a form users can submit to authenticate their session and gain access
 -- | to the application.
-module Conduit.Page.Login where
+module Turing.Page.Login where
 
 import Prelude
 
-import Conduit.Api.Request (LoginFields)
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.User (class ManageUser, loginUser)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, safeHref, whenElem)
-import Conduit.Data.Email (Email)
-import Conduit.Data.Route (Route(..))
-import Conduit.Form.Field as Field
-import Conduit.Form.Validation as V
+import Turing.Api.Request (LoginFields)
+import Turing.Capability.Navigate (class Navigate, navigate)
+import Turing.Capability.Resource.User (class ManageUser, loginUser)
+import Turing.Component.HTML.Header (header)
+import Turing.Component.HTML.Utils (css, safeHref, whenElem)
+import Turing.Data.Email (Email)
+import Turing.Data.Route (Route(..))
+import Turing.Form.Field as Field
+import Turing.Form.Validation as V
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Effect.Aff.Class (class MonadAff)

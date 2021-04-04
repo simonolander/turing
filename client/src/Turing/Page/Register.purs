@@ -1,19 +1,19 @@
--- | The registration form allows new users to sign up to the Conduit service and authenticate
+-- | The registration form allows new users to sign up to the Turing service and authenticate
 -- | their session.
-module Conduit.Page.Register where
+module Turing.Page.Register where
 
 import Prelude
 
-import Conduit.Api.Request (RegisterFields)
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.User (class ManageUser, registerUser)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, safeHref)
-import Conduit.Data.Email (Email)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username (Username)
-import Conduit.Form.Field as Field
-import Conduit.Form.Validation as V
+import Turing.Api.Request (RegisterFields)
+import Turing.Capability.Navigate (class Navigate, navigate)
+import Turing.Capability.Resource.User (class ManageUser, registerUser)
+import Turing.Component.HTML.Header (header)
+import Turing.Component.HTML.Utils (css, safeHref)
+import Turing.Data.Email (Email)
+import Turing.Data.Route (Route(..))
+import Turing.Data.Username (Username)
+import Turing.Form.Field as Field
+import Turing.Form.Validation as V
 import Data.Foldable (traverse_)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)

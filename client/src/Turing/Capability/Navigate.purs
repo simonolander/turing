@@ -4,12 +4,12 @@
 -- |
 -- | To learn more about why we use capabilities and this architecture, please see the guide:
 -- | https://thomashoneyman.com/guides/real-world-halogen/push-effects-to-the-edges/
-module Conduit.Capability.Navigate where
+module Turing.Capability.Navigate where
 
 import Prelude
 
 import Control.Monad.Trans.Class (lift)
-import Conduit.Data.Route (Route)
+import Turing.Data.Route (Route)
 import Halogen (HalogenM)
 
 -- | This capability represents the ability to move around the application. The `navigate` function

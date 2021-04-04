@@ -4,12 +4,12 @@
 -- | subscribed components, you can use a many-to-many bus.
 -- |
 -- | https://thomashoneyman.com/guides/real-world-halogen
-module Conduit.Env where
+module Turing.Env where
 
 import Prelude
 
-import Conduit.Api.Request (BaseURL)
-import Conduit.Data.Profile (Profile)
+import Turing.Api.Request (BaseURL)
+import Turing.Data.Profile (Profile)
 import Data.Maybe (Maybe)
 import Effect.Aff.Bus (BusRW)
 import Effect.Ref (Ref)

@@ -1,9 +1,9 @@
 -- | This module exports a pure HTML function to render a consistent footer throughout the app.
-module Conduit.Component.HTML.Footer where
+module Turing.Component.HTML.Footer where
 
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
-import Conduit.Component.HTML.Utils (css)
+import Turing.Component.HTML.Utils (css)
 
 footer :: forall i p. HH.HTML i p
 footer =
@@ -14,7 +14,7 @@ footer =
         [ css "logo-font"
         , HP.href "/"
         ]
-        [ HH.text "conduit" ]
+        [ HH.text "Turing" ]
       , HH.span
         [ css "attribution" ]
         [ HH.text "An interactive learning project from "

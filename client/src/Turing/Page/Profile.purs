@@ -1,27 +1,27 @@
 -- | User profiles display the articles they have written as well as the articles they have
 -- | favorited. It's also the main way users choose to follow one another. Users can view their
 -- | own profile.
-module Conduit.Page.Profile where
+module Turing.Page.Profile where
 
 import Prelude
 
-import Conduit.Api.Endpoint (noArticleParams)
-import Conduit.Capability.Resource.Article (class ManageArticle, getArticles)
-import Conduit.Capability.Resource.User (class ManageUser, getAuthor)
-import Conduit.Component.HTML.ArticleList (articleList, renderPagination)
-import Conduit.Component.HTML.Footer (footer)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
-import Conduit.Component.Part.FavoriteButton (favorite, unfavorite)
-import Conduit.Component.Part.FollowButton (follow, followButton, unfollow)
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.PaginatedArray (PaginatedArray)
-import Conduit.Data.Profile (Profile, Author)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username (Username)
-import Conduit.Data.Username as Username
-import Conduit.Env (UserEnv)
+import Turing.Api.Endpoint (noArticleParams)
+import Turing.Capability.Resource.Article (class ManageArticle, getArticles)
+import Turing.Capability.Resource.User (class ManageUser, getAuthor)
+import Turing.Component.HTML.ArticleList (articleList, renderPagination)
+import Turing.Component.HTML.Footer (footer)
+import Turing.Component.HTML.Header (header)
+import Turing.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
+import Turing.Component.Part.FavoriteButton (favorite, unfavorite)
+import Turing.Component.Part.FollowButton (follow, followButton, unfollow)
+import Turing.Data.Article (ArticleWithMetadata)
+import Turing.Data.Avatar as Avatar
+import Turing.Data.PaginatedArray (PaginatedArray)
+import Turing.Data.Profile (Profile, Author)
+import Turing.Data.Route (Route(..))
+import Turing.Data.Username (Username)
+import Turing.Data.Username as Username
+import Turing.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Data.Lens (Traversal')
 import Data.Lens.Index (ix)

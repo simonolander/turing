@@ -5,13 +5,13 @@
 -- |
 -- | In a framework like React, little bundles of functionality like this might be individual
 -- | components. In Halogen, they're simple pure functions which produce HTML.
-module Conduit.Form.Field where
+module Turing.Form.Field where
 
 import Prelude
 
-import Conduit.Component.HTML.Utils (css, maybeElem)
-import Conduit.Form.Validation (errorToString)
-import Conduit.Form.Validation as V
+import Turing.Component.HTML.Utils (css, maybeElem)
+import Turing.Form.Validation (errorToString)
+import Turing.Form.Validation as V
 import DOM.HTML.Indexed (HTMLinput)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
@@ -24,7 +24,7 @@ import Halogen.HTML.Properties as HP
 import Type.Row as Row
 
 -- | This small helper function that creates a submit button with customizable
--- | text. Since all submit buttons in the Conduit application look the same,
+-- | text. Since all submit buttons in the Turing application look the same,
 -- | we can just use this throughout the app.
 submit :: forall i p. String -> HH.HTML i p
 submit buttonText =

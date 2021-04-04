@@ -1,24 +1,24 @@
 -- | The editor allows users to write new articles or edit existing ones. Users write markdown and
 -- | can include tags for their articles; when articles are displayed, the markdown is rendered as
 -- | HTML content.
-module Conduit.Page.Editor where
+module Turing.Page.Editor where
 
 import Prelude
 
 import Component.HigherOrder.Connect as Connect
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.Article (class ManageArticle, createArticle, getArticle, updateArticle)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem)
-import Conduit.Component.TagInput (Tag(..))
-import Conduit.Component.TagInput as TagInput
-import Conduit.Data.Article (ArticleWithMetadata, Article)
-import Conduit.Data.Profile (Profile)
-import Conduit.Data.Route (Route(..))
-import Conduit.Env (UserEnv)
-import Conduit.Form.Field as Field
-import Conduit.Form.Validation (errorToString)
-import Conduit.Form.Validation as V
+import Turing.Capability.Navigate (class Navigate, navigate)
+import Turing.Capability.Resource.Article (class ManageArticle, createArticle, getArticle, updateArticle)
+import Turing.Component.HTML.Header (header)
+import Turing.Component.HTML.Utils (css, maybeElem)
+import Turing.Component.TagInput (Tag(..))
+import Turing.Component.TagInput as TagInput
+import Turing.Data.Article (ArticleWithMetadata, Article)
+import Turing.Data.Profile (Profile)
+import Turing.Data.Route (Route(..))
+import Turing.Env (UserEnv)
+import Turing.Form.Field as Field
+import Turing.Form.Validation (errorToString)
+import Turing.Form.Validation as V
 import Control.Monad.Reader (class MonadAsk)
 import Data.Const (Const)
 import Data.Foldable (for_)

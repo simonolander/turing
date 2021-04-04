@@ -7,13 +7,13 @@ module Main where
 import Prelude
 
 import Affjax (request, printError)
-import Conduit.Api.Endpoint (Endpoint(..))
-import Conduit.Api.Request (BaseURL(..), RequestMethod(..), defaultRequest, readToken)
-import Conduit.AppM (runAppM)
-import Conduit.Component.Router as Router
-import Conduit.Data.Profile as Profile
-import Conduit.Data.Route (routeCodec)
-import Conduit.Env (Env, LogLevel(..))
+import Turing.Api.Endpoint (Endpoint(..))
+import Turing.Api.Request (BaseURL(..), RequestMethod(..), defaultRequest, readToken)
+import Turing.AppM (runAppM)
+import Turing.Component.Router as Router
+import Turing.Data.Profile as Profile
+import Turing.Data.Route (routeCodec)
+import Turing.Env (Env, LogLevel(..))
 import Data.Bifunctor (lmap)
 import Data.Codec as Codec
 import Data.Codec.Argonaut (printJsonDecodeError)
@@ -64,7 +64,7 @@ main = HA.runHalogenAff do
   -- Our router component requires some information about its environment in order to run, so let's
   -- get that handled before we do anything else.
 
-  -- Our environment is a small record type, `Env`, defined in the `Conduit.Env` module. It
+  -- Our environment is a small record type, `Env`, defined in the `Turing.Env` module. It
   -- requires four fields: the profile of the currently-authenticated user (if there is one), the
   -- base URL of the application, the log level, and the channel used to broadcast changes in the
   -- value of the current user.
@@ -72,7 +72,7 @@ main = HA.runHalogenAff do
   -- This is a small MVP, so we'll just define pure values like our base URL and log level as
   -- constants. But it's also common to read configuration like this from the build environment.
   let
-    baseUrl = BaseURL "https://conduit.productionready.io"
+    baseUrl = BaseURL "https://Turing.productionready.io"
     logLevel = Dev
 
   -- We'll now construct our user environment, state that is accessible anywhere in the application.
@@ -133,7 +133,7 @@ main = HA.runHalogenAff do
   -- and the component we want to transform (the router). This will make our root component (the router)
   -- ready to run as a Halogen application.
   --
-  -- The `runAppM` function we wrote in the `Conduit.AppM` module provides this transformation from
+  -- The `runAppM` function we wrote in the `Turing.AppM` module provides this transformation from
   -- `AppM` to `Aff`, so long as you provide it with the proper environment -- which we have!
   --
   -- Let's put it all together. With `hoist`, `runAppM`, our environment, and our router component,
@@ -152,7 +152,7 @@ main = HA.runHalogenAff do
   -- `subscribe`, which lets us listen and react to messages output by the root component
   --
   -- Note: Since our root component is our router, the "queries" and "messages" above refer to the
-  -- `Query` and `Message` types defined in the `Conduit.Router` module. Only those queries and
+  -- `Query` and `Message` types defined in the `Turing.Router` module. Only those queries and
   -- messages can be used, or else you'll get a compiler error.
   halogenIO <- runUI rootComponent {} body
 

@@ -1,24 +1,24 @@
--- | The Conduit homepage allows users to explore articles in several ways: in a personalized feed,
+-- | The Turing homepage allows users to explore articles in several ways: in a personalized feed,
 -- | by tag, or by viewing all articles.
-module Conduit.Page.Home where
+module Turing.Page.Home where
 
 import Prelude
 
 import Component.HigherOrder.Connect as Connect
-import Conduit.Api.Endpoint (ArticleParams, Pagination, noArticleParams)
-import Conduit.Capability.Navigate (class Navigate)
-import Conduit.Capability.Resource.Article (class ManageArticle, getArticles, getCurrentUserFeed)
-import Conduit.Capability.Resource.Tag (class ManageTag, getAllTags)
-import Conduit.Component.HTML.ArticleList (articleList, renderPagination)
-import Conduit.Component.HTML.Footer (footer)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem, whenElem)
-import Conduit.Component.Part.FavoriteButton (favorite, unfavorite)
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.PaginatedArray (PaginatedArray)
-import Conduit.Data.Profile (Profile)
-import Conduit.Data.Route (Route(..))
-import Conduit.Env (UserEnv)
+import Turing.Api.Endpoint (ArticleParams, Pagination, noArticleParams)
+import Turing.Capability.Navigate (class Navigate)
+import Turing.Capability.Resource.Article (class ManageArticle, getArticles, getCurrentUserFeed)
+import Turing.Capability.Resource.Tag (class ManageTag, getAllTags)
+import Turing.Component.HTML.ArticleList (articleList, renderPagination)
+import Turing.Component.HTML.Footer (footer)
+import Turing.Component.HTML.Header (header)
+import Turing.Component.HTML.Utils (css, maybeElem, whenElem)
+import Turing.Component.Part.FavoriteButton (favorite, unfavorite)
+import Turing.Data.Article (ArticleWithMetadata)
+import Turing.Data.PaginatedArray (PaginatedArray)
+import Turing.Data.Profile (Profile)
+import Turing.Data.Route (Route(..))
+import Turing.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk)
 import Data.Lens (Traversal')
 import Data.Lens.Index (ix)
@@ -202,7 +202,7 @@ component = Connect.component $ H.mkComponent
             [ css "container" ]
             [ HH.h1
                 [ css "logo-font" ]
-                [ HH.text "conduit" ]
+                [ HH.text "Turing" ]
             , HH.p_
                 [ HH.text "A place to share your knowledge." ]
             ]

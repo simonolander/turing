@@ -1,29 +1,29 @@
 -- | Articles are stored as markdown strings, which is then rendered as HTMl. They also include
 -- | comments so users can read an article and then share what they thought about it. This component
--- | supports viewing and interacting with articles in Conduit.
-module Conduit.Page.ViewArticle where
+-- | supports viewing and interacting with articles in Turing.
+module Turing.Page.ViewArticle where
 
 import Prelude
 
-import Conduit.Capability.Navigate (class Navigate, navigate)
-import Conduit.Capability.Resource.Article (class ManageArticle, deleteArticle, getArticle)
-import Conduit.Capability.Resource.Comment (class ManageComment, createComment, deleteComment, getComments)
-import Conduit.Capability.Resource.User (class ManageUser)
-import Conduit.Component.HTML.Footer (footer)
-import Conduit.Component.HTML.Header (header)
-import Conduit.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
-import Conduit.Component.Part.FavoriteButton (ButtonSize(..), favorite, favoriteButton, unfavorite)
-import Conduit.Component.Part.FollowButton (follow, followButton, unfollow)
-import Conduit.Component.RawHTML as RawHTML
-import Conduit.Component.Utils (OpaqueSlot)
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.Comment (Comment, CommentId)
-import Conduit.Data.PreciseDateTime as PDT
-import Conduit.Data.Profile (Profile, Relation(..), Author)
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username as Username
-import Conduit.Env (UserEnv)
+import Turing.Capability.Navigate (class Navigate, navigate)
+import Turing.Capability.Resource.Article (class ManageArticle, deleteArticle, getArticle)
+import Turing.Capability.Resource.Comment (class ManageComment, createComment, deleteComment, getComments)
+import Turing.Capability.Resource.User (class ManageUser)
+import Turing.Component.HTML.Footer (footer)
+import Turing.Component.HTML.Header (header)
+import Turing.Component.HTML.Utils (css, maybeElem, safeHref, whenElem)
+import Turing.Component.Part.FavoriteButton (ButtonSize(..), favorite, favoriteButton, unfavorite)
+import Turing.Component.Part.FollowButton (follow, followButton, unfollow)
+import Turing.Component.RawHTML as RawHTML
+import Turing.Component.Utils (OpaqueSlot)
+import Turing.Data.Article (ArticleWithMetadata)
+import Turing.Data.Avatar as Avatar
+import Turing.Data.Comment (Comment, CommentId)
+import Turing.Data.PreciseDateTime as PDT
+import Turing.Data.Profile (Profile, Relation(..), Author)
+import Turing.Data.Route (Route(..))
+import Turing.Data.Username as Username
+import Turing.Env (UserEnv)
 import Control.Monad.Reader (class MonadAsk, asks)
 import Control.Parallel (parTraverse_)
 import Data.Foldable (for_)

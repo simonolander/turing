@@ -1,17 +1,17 @@
 -- | This module exports a pure HTML function to render lists of articles in various formats,
 -- | included paginated lists.
-module Conduit.Component.HTML.ArticleList where
+module Turing.Component.HTML.ArticleList where
 
 import Prelude
 
-import Conduit.Component.HTML.Utils (css, safeHref, whenElem)
-import Conduit.Component.Part.FavoriteButton (favoriteButton, ButtonSize(..))
-import Conduit.Data.Article (ArticleWithMetadata)
-import Conduit.Data.Avatar as Avatar
-import Conduit.Data.PaginatedArray (PaginatedArray)
-import Conduit.Data.PreciseDateTime as PDT
-import Conduit.Data.Route (Route(..))
-import Conduit.Data.Username as Username
+import Turing.Component.HTML.Utils (css, safeHref, whenElem)
+import Turing.Component.Part.FavoriteButton (favoriteButton, ButtonSize(..))
+import Turing.Data.Article (ArticleWithMetadata)
+import Turing.Data.Avatar as Avatar
+import Turing.Data.PaginatedArray (PaginatedArray)
+import Turing.Data.PreciseDateTime as PDT
+import Turing.Data.Route (Route(..))
+import Turing.Data.Username as Username
 import Data.Array (mapWithIndex)
 import Data.Enum (enumFromTo)
 import Data.Foldable (length)
