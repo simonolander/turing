@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    display: flex;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+}
+
+.banner {
+    background-color: grey;
+}
