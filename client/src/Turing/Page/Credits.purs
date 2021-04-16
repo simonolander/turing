@@ -36,8 +36,7 @@ newtype RegisterForm r f = RegisterForm (r
 
 derive instance newtypeRegisterForm :: Newtype (RegisterForm r f) _
 
-data Action
-  = HandleRegisterForm RegisterFields
+type Action = Unit
 
 component
   :: forall q o m
@@ -48,13 +47,9 @@ component
 component = H.mkComponent
   { initialState: const unit
   , render
-  , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
+  , eval: H.mkEval H.defaultEval
   }
   where
-  handleAction = case _ of
-    HandleRegisterForm fields ->
-      registerUser fields >>= traverse_ (\_ -> navigate Home)
-
   render _ =
     HH.text "Credits"
 
