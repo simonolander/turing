@@ -27,6 +27,7 @@ import Turing.Page.Profile (Tab(..))
 import Turing.Page.Profile as Profile
 import Turing.Page.Register as Register
 import Turing.Page.Settings as Settings
+import Turing.Page.Credits as Credits
 import Turing.Page.ViewArticle as ViewArticle
 import Control.Monad.Reader (class MonadAsk)
 import Data.Either (hush)
@@ -57,6 +58,7 @@ type ChildSlots =
   , login :: OpaqueSlot Unit
   , register :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
+  , credits :: OpaqueSlot Unit
   , editor :: OpaqueSlot Unit
   , viewArticle :: OpaqueSlot Unit
   , profile :: OpaqueSlot Unit
@@ -130,6 +132,8 @@ component = Connect.component $ H.mkComponent
       Settings ->
         HH.slot (SProxy :: _ "settings") unit Settings.component unit absurd
           # authorize currentUser
+      Credits ->
+        HH.slot (SProxy :: _ "credits") unit Credits.component unit absurd
       Editor ->
         HH.slot (SProxy :: _ "editor") unit Editor.component { slug: Nothing } absurd
           # authorize currentUser

@@ -12,7 +12,7 @@ import Turing.Capability.Resource.Tag (class ManageTag, getAllTags)
 import Turing.Component.HTML.ArticleList (articleList, renderPagination)
 import Turing.Component.HTML.Footer (footer)
 import Turing.Component.HTML.Header (header)
-import Turing.Component.HTML.Utils (css, maybeElem, whenElem)
+import Turing.Component.HTML.Utils (css, maybeElem, whenElem, safeHref)
 import Turing.Component.Part.FavoriteButton (favorite, unfavorite)
 import Turing.Data.Article (ArticleWithMetadata)
 import Turing.Data.PaginatedArray (PaginatedArray)
@@ -154,28 +154,9 @@ component = Connect.component $ H.mkComponent
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render state@{ tags, articles, currentUser } =
     HH.div_
-      [ header currentUser Home
-      , HH.div
-          [ css "home-page" ]
-          [ whenElem (isNothing currentUser) \_ -> banner
-          , HH.div
-              [ css "container page" ]
-              [ HH.div
-                  [ css "row" ]
-                  [ mainView
-                  , HH.div
-                      [ css "col-md-3" ]
-                      [ HH.div
-                          [ css "sidebar" ]
-                          [ HH.p_
-                              [ HH.text "Popular Tags" ]
-                          , renderTags tags
-                          ]
-                      ]
-                  ]
-              ]
-          ]
-      , footer
+      [ HH.a
+          [ safeHref Credits ]
+          [ HH.text "Credits" ]
       ]
     where
     mainView =
