@@ -1,5 +1,9 @@
--- | The registration form allows new users to sign up to the Turing service and authenticate
--- | their session.
+-- | The credits page display everyone that helped out making this application
+-- |
+-- |  - IntelliJ plugin team
+-- |  - Halogen team
+-- |  - Halogen real world
+-- |
 module Turing.Page.Credits where
 
 import Prelude
