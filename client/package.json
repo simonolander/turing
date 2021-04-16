@@ -8,7 +8,8 @@
     "build": "spago build",
     "test": "spago test",
     "bundle": "rm -rf dist && spago bundle-app --to index.js",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "watch": "spago build --watch --clear-screen"
   },
   "dependencies": {
     "decimal.js": "^10.2.0",
