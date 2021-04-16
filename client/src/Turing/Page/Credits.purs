@@ -56,35 +56,7 @@ component = H.mkComponent
       registerUser fields >>= traverse_ (\_ -> navigate Home)
 
   render _ =
-    container
-      [ HH.h1
-          [ css "text-xs-center"]
-          [ HH.text "Sign Up" ]
-      , HH.p
-          [ css "text-xs-center" ]
-          [ HH.a
-              [ safeHref Login ]
-              [ HH.text "Already have an account?" ]
-        ]
-      , HH.slot F._formless unit formComponent unit (Just <<< HandleRegisterForm)
-      ]
-    where
-    container html =
-      HH.div_
-        [ header Nothing Register
-        , HH.div
-            [ css "auth-page" ]
-            [ HH.div
-                [ css "container page" ]
-                [ HH.div
-                    [ css "row" ]
-                    [ HH.div
-                        [ css "col-md-6 offset-md-3 col-xs12" ]
-                        html
-                    ]
-                ]
-            ]
-        ]
+    HH.text "Credits"
 
 data FormAction = Submit Event.Event
 
