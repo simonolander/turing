@@ -14,6 +14,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Data.Maybe (Maybe(..))
+import Effect.Console as Console
 
 data Action =
     NewSpecification
@@ -43,5 +44,6 @@ component = H.mkComponent
     handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
     handleAction action =
         case action of
-            NewSpecification -> pure unit
+            NewSpecification -> do
+                H.liftEffect $ Console.log "Hello"
 

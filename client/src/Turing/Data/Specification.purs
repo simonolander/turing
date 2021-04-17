@@ -5,6 +5,8 @@ import Prelude
 import Turing.Data.Tape
 
 type Specification =
-    { initialTape :: Tape
+    { id :: String
+    , initialTape :: Tape
     , maximumNumberOfCards :: Int
     }
+
