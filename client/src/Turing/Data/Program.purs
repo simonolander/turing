@@ -1,6 +1,5 @@
 module Turing.Data.Program where
 
-import Prelude
 import Turing.Data.CardDeck (CardDeck)
 import Turing.Data.Card (Card)
 
