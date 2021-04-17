@@ -4,15 +4,9 @@ import Prelude
 import Turing.Data.Program (Program)
 import Turing.Data.Card (Card)
 import Turing.Data.Tape (Tape, scan)
+import Turing.Data.ExecutionState
 import Data.Eq (class Eq)
-
-data ExecutionState
-    = Scanning
-    | Writing Boolean
-    | Moving
-    | Halted
-
-derive instance eqExecutionState :: Eq ExecutionState
+import Data.Show (class Show)
 
 type Execution =
     { program :: Program
