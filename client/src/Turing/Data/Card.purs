@@ -15,3 +15,7 @@ empty =
     { id: CardId ""
     , instructions: Tuple Inst.empty Inst.empty
     }
+
+instruction :: Boolean -> Card -> Inst.Instruction
+instruction true card = fst card.instructions
+instruction false card = snd card.instructions
