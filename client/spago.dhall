@@ -7,6 +7,7 @@ You can edit this file as you like.
   [ "aff"
   , "aff-bus"
   , "affjax"
+  , "assert"
   , "argonaut-core"
   , "codec-argonaut"
   , "console"

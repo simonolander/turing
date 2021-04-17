@@ -5,9 +5,8 @@ import Prelude
 import Effect (Effect)
 import Effect.Class.Console (log)
 
-import Test.Turing.Data.Machine as Machine
+import Test.Turing.Data.CardId as CardId
 
 main :: Effect Unit
 main = do
-    log "🍝"
-    log "You should add some tests."
+    CardId.main
