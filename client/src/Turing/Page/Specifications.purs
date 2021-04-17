@@ -15,6 +15,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Data.Maybe (Maybe(..))
 import Effect.Console as Console
+import Turing.Utils.Random (randomString)
 
 data Action =
     NewSpecification
@@ -44,6 +45,7 @@ component = H.mkComponent
     handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
     handleAction action =
         case action of
-            NewSpecification -> do
-                H.liftEffect $ Console.log "Hello"
+            NewSpecification -> H.liftEffect do
+                id <- randomString 6
+                Console.log (id)
 
