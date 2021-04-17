@@ -6,9 +6,9 @@ import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 
 data ExecutionState
-    = Scanning
-    | Writing Boolean
+    = Writing
     | Moving
+    | ChangingCard
     | Halted
 
 derive instance eqExecutionState :: Eq ExecutionState

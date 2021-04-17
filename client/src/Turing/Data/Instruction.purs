@@ -1,17 +1,18 @@
 module Turing.Data.Instruction where
 
 import Turing.Data.CardId (CardId)
+import Turing.Data.Direction (Direction(..))
 import Data.Maybe (Maybe(..))
 
 type Instruction =
     { writeSymbol :: Boolean
-    , moveTapeLeft :: Boolean
+    , moveDirection :: Direction
     , nextCardId :: Maybe CardId
     }
 
 empty :: Instruction
 empty =
     { writeSymbol: false
-    , moveTapeLeft: false
+    , moveDirection : Right
     , nextCardId: Nothing
     }
