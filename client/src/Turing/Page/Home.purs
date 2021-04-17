@@ -154,10 +154,19 @@ component = Connect.component $ H.mkComponent
   render :: forall slots. State -> H.ComponentHTML Action slots m
   render state@{ tags, articles, currentUser } =
     HH.div_
-      [ HH.a
-          [ safeHref Credits ]
-          [ HH.text "Credits" ]
-      ]
+        [ HH.ul_
+            [ HH.li_
+                [ HH.a
+                    [ safeHref Credits ]
+                    [ HH.text "Credits" ]
+                ]
+            , HH.li_
+                [ HH.a
+                    [ safeHref Specifications ]
+                    [ HH.text "Specifications" ]
+                ]
+            ]
+        ]
     where
     mainView =
       HH.div
