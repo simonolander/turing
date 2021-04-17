@@ -16,8 +16,12 @@ main :: Effect Unit
 main = runTest do
     suite "CardId" do
         test "show" do
-            quickCheck \id -> id == (show (CardId id))
+            quickCheck \id -> id == show (CardId id)
         test "wrap" do
             quickCheck \id -> wrap id == (CardId id)
+        test "unwrap" do
+            quickCheck \id -> unwrap (CardId id) == id
         test "eq" do
             quickCheck \id1 id2 -> (id1 == id2) == ((CardId id1) == (CardId id2))
+        test "ord" do
+            quickCheck \id1 id2 -> (id1 < id2) == ((CardId id1) < (CardId id2))
