@@ -140,8 +140,8 @@ component = Connect.component $ H.mkComponent
         HH.slot (SProxy :: _ "credits") unit Credits.component unit absurd
       Specifications ->
         HH.slot (SProxy :: _ "specifications") unit Specifications.component unit absurd
-      Specification slug ->
-        HH.slot (SProxy :: _ "specification") unit Specification.component { slug } absurd
+      Specification id ->
+        HH.slot (SProxy :: _ "specification") unit Specification.component { id } absurd
       Editor ->
         HH.slot (SProxy :: _ "editor") unit Editor.component { slug: Nothing } absurd
           # authorize currentUser

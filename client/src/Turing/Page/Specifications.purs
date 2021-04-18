@@ -8,7 +8,7 @@ module Turing.Page.Specifications where
 
 import Prelude
 
-import Turing.Capability.Navigate (class Navigate)
+import Turing.Capability.Navigate (class Navigate, navigate)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -16,8 +16,11 @@ import Halogen.HTML.Events as HE
 import Data.Maybe (Maybe(..))
 import Effect.Console as Console
 import Turing.Utils.Random (randomString)
+import Turing.Data.Route as Route
 import Data.Array
+import Data.Newtype (wrap)
 import Turing.Data.Specification as Spec
+import Data.Show (show)
 
 data Action =
     NewSpecification
@@ -47,7 +50,7 @@ component = H.mkComponent
                 [ HH.text "New spec" ]
             , HH.ul_ $
                 state.specifications
-                    <#> (\spec -> spec.id)
+                    <#> (\spec -> show spec.id)
                     <#> (\id -> HH.li_ [ HH.text id ])
             ]
 
@@ -56,8 +59,10 @@ component = H.mkComponent
         case action of
             NewSpecification -> do
                 state <- H.get
-                id <- H.liftEffect $ randomString 6
+                str <- H.liftEffect $ randomString 6
+                let id = wrap str
                 H.modify_ _ { specifications = Spec.createSpecification id : state.specifications }
+                navigate (Route.Specification id)
 
     initialState :: Input -> State
     initialState _ = { specifications: [] }

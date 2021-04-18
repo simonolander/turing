@@ -9,7 +9,7 @@ import Data.String (length, codePointAt, fromCodePointArray, CodePoint, codePoin
 import Data.Maybe (fromMaybe)
 
 alphabet :: String
-alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
+alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 maximumIndex :: Int
 maximumIndex = length alphabet - 1

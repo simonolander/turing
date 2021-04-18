@@ -14,10 +14,13 @@ module Turing.Data.Route where
 import Prelude hiding ((/))
 
 import Data.Either (note)
+import Data.Newtype (wrap, unwrap)
 import Data.Generic.Rep (class Generic)
 import Turing.Data.Username (Username)
 import Turing.Data.Username as Username
-import Routing.Duplex (RouteDuplex', as, root, segment)
+import Turing.Data.Specification (SpecificationId)
+import Turing.Data.Specification as Spec
+import Routing.Duplex (RouteDuplex', as, root, segment, string)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
 import Slug (Slug)
@@ -34,7 +37,7 @@ data Route
   | Settings
   | Credits
   | Specifications
-  | Specification Slug
+  | Specification SpecificationId
   | Editor
   | EditArticle Slug
   | ViewArticle Slug
@@ -58,7 +61,7 @@ routeCodec = root $ sum
   , "Register": "register" / noArgs
   , "Settings": "settings" / noArgs
   , "Credits": "credits" / noArgs
-  , "Specification": "specs" / slug segment
+  , "Specification": "specs" / specId segment
   , "Specifications": "specs" / noArgs
   , "Editor": "editor" / noArgs
   , "EditArticle": "editor" / slug segment
@@ -74,3 +77,6 @@ slug = as Slug.toString (Slug.parse >>> note "Bad slug")
 -- | This combinator transforms a codec over `String` into one that operates on the `Username` type.
 uname :: RouteDuplex' String -> RouteDuplex' Username
 uname = as Username.toString (Username.parse >>> note "Bad username")
+
+specId :: RouteDuplex' String -> RouteDuplex' SpecificationId
+specId = as unwrap (Spec.parseId >>> note "Bad spec id")

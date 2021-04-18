@@ -10,7 +10,9 @@ import Halogen.HTML.Events as HE
 import Data.Maybe (Maybe(..))
 import Effect.Console as Console
 import Turing.Utils.Random (randomString)
+import Data.Newtype (wrap)
 import Data.Array
+import Turing.Data.Specification (SpecificationId, Specification)
 import Turing.Data.Specification as Spec
 import Slug (Slug)
 
@@ -18,11 +20,11 @@ data Action =
     NewSpecification
 
 type State =
-    { specifications :: Array Spec.Specification
+    { specifications :: Array Specification
     }
 
 type Input =
-  { slug :: Slug
+  { id :: SpecificationId
   }
 
 type Message = Void
@@ -43,20 +45,12 @@ component = H.mkComponent
             [ HH.button
                 [ HE.onClick $ const $ Just NewSpecification ]
                 [ HH.text "New spec" ]
-            , HH.ul_ $
-                state.specifications
-                    <#> (\spec -> spec.id)
-                    <#> (\id -> HH.li_ [ HH.text id ])
             ]
 
     handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
     handleAction action =
         case action of
-            NewSpecification -> do
-                state <- H.get
-                id <- H.liftEffect $ randomString 6
-                H.modify_ _ { specifications = Spec.createSpecification id : state.specifications }
-
+            NewSpecification -> do pure unit
     initialState :: Input -> State
     initialState _ = { specifications: [] }
 
