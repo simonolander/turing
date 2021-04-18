@@ -1,4 +1,4 @@
-module Turing.Page.Specification where
+module Turing.Page.Spec where
 
 import Prelude
 
@@ -12,19 +12,19 @@ import Effect.Console as Console
 import Turing.Utils.Random (randomString)
 import Data.Newtype (wrap)
 import Data.Array
-import Turing.Data.Specification (SpecificationId, Specification)
-import Turing.Data.Specification as Spec
+import Turing.Data.Spec (SpecId, Spec)
+import Turing.Data.Spec as Spec
 import Slug (Slug)
 
 data Action =
-    NewSpecification
+    NewSpec
 
 type State =
-    { specifications :: Array Specification
+    { specs :: Array Spec
     }
 
 type Input =
-  { id :: SpecificationId
+  { id :: SpecId
   }
 
 type Message = Void
@@ -43,14 +43,14 @@ component = H.mkComponent
     render state =
         HH.div_
             [ HH.button
-                [ HE.onClick $ const $ Just NewSpecification ]
+                [ HE.onClick $ const $ Just NewSpec ]
                 [ HH.text "New spec" ]
             ]
 
     handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
     handleAction action =
         case action of
-            NewSpecification -> do pure unit
+            NewSpec -> do pure unit
     initialState :: Input -> State
-    initialState _ = { specifications: [] }
+    initialState _ = { specs: [] }
 

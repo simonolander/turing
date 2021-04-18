@@ -5,7 +5,7 @@ import Turing.Data.Program (Program)
 import Turing.Data.Card as Card
 import Turing.Data.Tape as Tape
 import Turing.Data.ExecutionState
-import Turing.Data.Specification
+import Turing.Data.Spec
 import Turing.Data.Direction
 import Turing.Data.Instruction as Inst
 import Data.Eq (class Eq)
@@ -15,7 +15,7 @@ import Data.List
 import Data.Map as Map
 
 type Execution =
-    { specification :: Specification
+    { spec :: Spec
     , program :: Program
     , history :: List ExecutionSubStep
     }
@@ -37,7 +37,7 @@ subStep execution =
     getInstruction :: List ExecutionSubStep -> Inst.Instruction
     getInstruction Nil =
         let
-            tape = execution.specification.initialTape
+            tape = execution.spec.initialTape
             position = execution.program.initialPosition
             scannedSymbol = Tape.scan position tape
             card = execution.program.initialCard

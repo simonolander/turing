@@ -162,8 +162,8 @@ component = Connect.component $ H.mkComponent
                 ]
             , HH.li_
                 [ HH.a
-                    [ safeHref Specifications ]
-                    [ HH.text "Specifications" ]
+                    [ safeHref Specs ]
+                    [ HH.text "Specs" ]
                 ]
             ]
         ]

@@ -28,8 +28,8 @@ import Turing.Page.Profile as Profile
 import Turing.Page.Register as Register
 import Turing.Page.Settings as Settings
 import Turing.Page.Credits as Credits
-import Turing.Page.Specifications as Specifications
-import Turing.Page.Specification as Specification
+import Turing.Page.Specs as Specs
+import Turing.Page.Spec as Spec
 import Turing.Page.ViewArticle as ViewArticle
 import Control.Monad.Reader (class MonadAsk)
 import Data.Either (hush)
@@ -61,9 +61,9 @@ type ChildSlots =
   , register :: OpaqueSlot Unit
   , settings :: OpaqueSlot Unit
   , credits :: OpaqueSlot Unit
-  , specifications :: OpaqueSlot Unit
+  , specs :: OpaqueSlot Unit
   , editor :: OpaqueSlot Unit
-  , specification :: OpaqueSlot Unit
+  , spec :: OpaqueSlot Unit
   , viewArticle :: OpaqueSlot Unit
   , profile :: OpaqueSlot Unit
   )
@@ -138,10 +138,10 @@ component = Connect.component $ H.mkComponent
           # authorize currentUser
       Credits ->
         HH.slot (SProxy :: _ "credits") unit Credits.component unit absurd
-      Specifications ->
-        HH.slot (SProxy :: _ "specifications") unit Specifications.component unit absurd
-      Specification id ->
-        HH.slot (SProxy :: _ "specification") unit Specification.component { id } absurd
+      Specs ->
+        HH.slot (SProxy :: _ "specs") unit Specs.component unit absurd
+      Spec id ->
+        HH.slot (SProxy :: _ "spec") unit Spec.component { id } absurd
       Editor ->
         HH.slot (SProxy :: _ "editor") unit Editor.component { slug: Nothing } absurd
           # authorize currentUser
