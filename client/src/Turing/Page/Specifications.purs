@@ -4,7 +4,7 @@
 -- |  - Halogen team
 -- |  - Halogen real world
 -- |
-module Turing.Page.Specifications where
+module Turing.Page.Specs where
 
 import Prelude
 
@@ -19,14 +19,14 @@ import Turing.Utils.Random (randomString)
 import Turing.Data.Route as Route
 import Data.Array
 import Data.Newtype (wrap)
-import Turing.Data.Specification as Spec
+import Turing.Data.Spec as Spec
 import Data.Show (show)
 
 data Action =
-    NewSpecification
+    NewSpec
 
 type State =
-    { specifications :: Array Spec.Specification
+    { specs :: Array Spec.Spec
     }
 
 type Input = Unit
@@ -46,10 +46,10 @@ component = H.mkComponent
     render state =
         HH.div_
             [ HH.button
-                [ HE.onClick $ const $ Just NewSpecification ]
+                [ HE.onClick $ const $ Just NewSpec ]
                 [ HH.text "New spec" ]
             , HH.ul_ $
-                state.specifications
+                state.specs
                     <#> (\spec -> show spec.id)
                     <#> (\id -> HH.li_ [ HH.text id ])
             ]
@@ -57,13 +57,13 @@ component = H.mkComponent
     handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
     handleAction action =
         case action of
-            NewSpecification -> do
+            NewSpec -> do
                 state <- H.get
                 str <- H.liftEffect $ randomString 6
                 let id = wrap str
-                H.modify_ _ { specifications = Spec.createSpecification id : state.specifications }
-                navigate (Route.Specification id)
+                H.modify_ _ { specs = Spec.createSpec id : state.specs }
+                navigate (Route.Spec id)
 
     initialState :: Input -> State
-    initialState _ = { specifications: [] }
+    initialState _ = { specs: [] }
 

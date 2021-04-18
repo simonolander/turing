@@ -18,8 +18,8 @@ import Data.Newtype (wrap, unwrap)
 import Data.Generic.Rep (class Generic)
 import Turing.Data.Username (Username)
 import Turing.Data.Username as Username
-import Turing.Data.Specification (SpecificationId)
-import Turing.Data.Specification as Spec
+import Turing.Data.Spec (SpecId)
+import Turing.Data.Spec as Spec
 import Routing.Duplex (RouteDuplex', as, root, segment, string)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
@@ -36,8 +36,8 @@ data Route
   | Register
   | Settings
   | Credits
-  | Specifications
-  | Specification SpecificationId
+  | Specs
+  | Spec SpecId
   | Editor
   | EditArticle Slug
   | ViewArticle Slug
@@ -61,8 +61,8 @@ routeCodec = root $ sum
   , "Register": "register" / noArgs
   , "Settings": "settings" / noArgs
   , "Credits": "credits" / noArgs
-  , "Specification": "specs" / specId segment
-  , "Specifications": "specs" / noArgs
+  , "Spec": "specs" / specId segment
+  , "Specs": "specs" / noArgs
   , "Editor": "editor" / noArgs
   , "EditArticle": "editor" / slug segment
   , "ViewArticle": "article" / slug segment
@@ -78,5 +78,5 @@ slug = as Slug.toString (Slug.parse >>> note "Bad slug")
 uname :: RouteDuplex' String -> RouteDuplex' Username
 uname = as Username.toString (Username.parse >>> note "Bad username")
 
-specId :: RouteDuplex' String -> RouteDuplex' SpecificationId
+specId :: RouteDuplex' String -> RouteDuplex' SpecId
 specId = as unwrap (Spec.parseId >>> note "Bad spec id")

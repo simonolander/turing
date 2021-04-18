@@ -1,5 +1,5 @@
---| A specification represents a single puzzle in this game
-module Turing.Data.Specification where
+--| A spec represents a single puzzle in this game
+module Turing.Data.Spec where
 
 import Prelude
 import Turing.Data.Tape as Tape
@@ -9,26 +9,26 @@ import Data.Newtype (class Newtype, unwrap, wrap)
 import Data.Show (class Show)
 import Data.Maybe
 
-newtype SpecificationId = SpecificationId String
+newtype SpecId = SpecId String
 
-derive instance eqSpecificationId :: Eq SpecificationId
-derive instance ordSpecificationId :: Ord SpecificationId
-derive instance newtypeSpecificationId :: Newtype SpecificationId _
-instance showSpecificationId :: Show SpecificationId where
+derive instance eqSpecId :: Eq SpecId
+derive instance ordSpecId :: Ord SpecId
+derive instance newtypeSpecId :: Newtype SpecId _
+instance showSpecId :: Show SpecId where
     show = unwrap
 
-parseId :: String -> Maybe SpecificationId
+parseId :: String -> Maybe SpecId
 parseId "" = Nothing
 parseId str = Just $ wrap str
 
-type Specification =
-    { id :: SpecificationId
+type Spec =
+    { id :: SpecId
     , initialTape :: Tape.Tape
     , maximumNumberOfCards :: Int
     }
 
-createSpecification :: SpecificationId -> Specification
-createSpecification id =
+createSpec :: SpecId -> Spec
+createSpec id =
     { id
     , initialTape: Tape.empty
     , maximumNumberOfCards: 0
