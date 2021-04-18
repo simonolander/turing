@@ -26,6 +26,7 @@ import Turing.Capability.Now (class Now)
 import Turing.Capability.Resource.Article (class ManageArticle)
 import Turing.Capability.Resource.Comment (class ManageComment)
 import Turing.Capability.Resource.Tag (class ManageTag)
+import Turing.Capability.Resource.Spec (class ManageSpec)
 import Turing.Capability.Resource.User (class ManageUser)
 import Turing.Data.Article as Article
 import Turing.Data.Comment as Comment
@@ -138,23 +139,23 @@ derive newtype instance monadAffAppM :: MonadAff AppM
 -- | ```purescript
 -- | toggleLogLevel :: forall m. MonadAsk Env m => m LogLevel
 -- | toggleLogLevel = do
--- |   env <- ask
--- |  if env.logLevel == Dev then Prod else Dev
+-- |    env <- ask
+-- |    if env.logLevel == Dev then Prod else Dev
 -- | ```
 instance monadAskAppM :: TypeEquals e Env => MonadAsk e AppM where
-  ask = AppM $ asks from
+    ask = AppM $ asks from
 
 -- | `ParAppM` allows our `AppM` to be parallelizable in conjunction with `Aff`.
 newtype ParAppM a
-  = ParAppM (ReaderT Env ParAff a)
+    = ParAppM (ReaderT Env ParAff a)
 
 derive newtype instance functorParAppM :: Functor ParAppM
 derive newtype instance applyParAppM :: Apply ParAppM
 derive newtype instance applicativeParAppM :: Applicative ParAppM
 
 instance parallelAppM :: Parallel ParAppM AppM where
-  parallel (AppM readerT) = ParAppM (parallel readerT)
-  sequential (ParAppM readerT) = AppM (sequential readerT)
+    parallel (AppM readerT) = ParAppM (parallel readerT)
+    sequential (ParAppM readerT) = AppM (sequential readerT)
 
 -- | We're finally ready to write concrete implementations for each of our abstract capabilities.
 -- | For an in-depth description of each capability, please refer to the relevant `Capability.*`
@@ -172,37 +173,37 @@ instance parallelAppM :: Parallel ParAppM AppM where
 -- | In our test monad, we won't perform effects -- we'll just return a hard-coded time so that we
 -- | can ensure tests are reproducible.
 instance nowAppM :: Now AppM where
-  now = liftEffect Now.now
-  nowDate = liftEffect Now.nowDate
-  nowTime = liftEffect Now.nowTime
-  nowDateTime = liftEffect Now.nowDateTime
+    now = liftEffect Now.now
+    nowDate = liftEffect Now.nowDate
+    nowTime = liftEffect Now.nowTime
+    nowDateTime = liftEffect Now.nowDateTime
 
 -- | Next up: logging. Ideally we'd use a logging service, but for the time being, we'll just log
 -- | to the console. We'll rely on our global environment to decide whether to log all messages
 -- | (`Dev`) or just important messages (`Prod`).
 instance logMessagesAppM :: LogMessages AppM where
-  logMessage log = do
-    env <- ask
-    liftEffect case env.logLevel, Log.reason log of
-      Prod, Log.Debug -> pure unit
-      _, _ -> Console.log $ Log.message log
+    logMessage log = do
+        env <- ask
+        liftEffect case env.logLevel, Log.reason log of
+            Prod, Log.Debug -> pure unit
+            _, _ -> Console.log $ Log.message log
 
 -- | Our app uses hash-based routing, so to navigate from place to place, we'll just set the hash.
 -- | Note how our navigation capability uses our routing data type rather than let you set any
 -- | arbitrary hash. Logging out is a little more involved, because we need to clean up things like
 -- | the auth token. Navigating home will take care of emptying the reference to the current user.
 instance navigateAppM :: Navigate AppM where
-  navigate =
-    liftEffect <<< setHash <<< print Route.routeCodec
+    navigate =
+        liftEffect <<< setHash <<< print Route.routeCodec
 
-  logout = do
-    { currentUser, userBus } <- asks _.userEnv
-    liftEffect do
-      Ref.write Nothing currentUser
-      Request.removeToken
-    liftAff do
-      Bus.write Nothing userBus
-    navigate Route.Home
+    logout = do
+        { currentUser, userBus } <- asks _.userEnv
+        liftEffect do
+            Ref.write Nothing currentUser
+            Request.removeToken
+        liftAff do
+            Bus.write Nothing userBus
+        navigate Route.Home
 
 -- | Our first resource class describes what operations we have available to manage users. Logging
 -- | in and registration require manipulating a token, but we've designed the `Token` type so its
@@ -210,97 +211,98 @@ instance navigateAppM :: Navigate AppM where
 -- | the `login` and `register` implementations are directly imported. The others use our nicer
 -- | `mkRequest` and `mkAuthRequest` helpers.
 instance manageUserAppM :: ManageUser AppM where
-  loginUser =
-    authenticate Request.login
+    loginUser =
+        authenticate Request.login
 
-  registerUser =
-    authenticate Request.register
+    registerUser =
+        authenticate Request.register
 
-  getCurrentUser = do
-    mbJson <- mkAuthRequest { endpoint: User, method: Get }
-    map (map _.user)
-      $ decode (CAR.object "User" { user: Profile.profileWithEmailCodec }) mbJson
+    getCurrentUser = do
+        mbJson <- mkAuthRequest { endpoint: User, method: Get }
+        map (map _.user)
+            $ decode (CAR.object "User" { user: Profile.profileWithEmailCodec }) mbJson
 
-  getAuthor username = do
-    mbJson <- mkRequest { endpoint: Profiles username, method: Get }
-    map (map _.profile)
-      $ decodeWithUser (\u -> CAR.object "Profile" { profile: Profile.authorCodec u }) mbJson
+    getAuthor username = do
+        mbJson <- mkRequest { endpoint: Profiles username, method: Get }
+        map (map _.profile)
+            $ decodeWithUser (\u -> CAR.object "Profile" { profile: Profile.authorCodec u }) mbJson
 
-  updateUser fields =
-    void $ mkAuthRequest
-      { endpoint: User
-      , method: Put (Just (Codec.encode Profile.profileWithEmailPasswordCodec fields))
-      }
+    updateUser fields =
+        void $ mkAuthRequest
+            { endpoint: User
+            , method: Put (Just (Codec.encode Profile.profileWithEmailPasswordCodec fields))
+            }
 
-  followUser username = do
-    mbJson <- mkAuthRequest { endpoint: Follow username, method: Post Nothing }
-    map (map _.profile)
-      $ decodeWithUser (\u -> CAR.object "Profile" { profile: Profile.authorCodec u }) mbJson
+    followUser username = do
+        mbJson <- mkAuthRequest { endpoint: Follow username, method: Post Nothing }
+        map (map _.profile)
+            $ decodeWithUser (\u -> CAR.object "Profile" { profile: Profile.authorCodec u }) mbJson
 
-  unfollowUser username = do
-    mbJson <- mkAuthRequest { endpoint: Follow username, method: Delete }
-    map (map _.profile)
-      $ decodeWithUser (\u -> CAR.object "Profile" { profile: Profile.authorCodec u }) mbJson
+    unfollowUser username = do
+        mbJson <- mkAuthRequest { endpoint: Follow username, method: Delete }
+        map (map _.profile)
+            $ decodeWithUser (\u -> CAR.object "Profile" { profile: Profile.authorCodec u }) mbJson
 
 -- | Our operations for managing tags
 instance manageTagAppM :: ManageTag AppM where
-  getAllTags = do
-    mbJson <- mkRequest { endpoint: Tags, method: Get }
-    map (map _.tags) $ decode (CAR.object "Tags" { tags: CA.array CA.string }) mbJson
+    getAllTags = do
+        mbJson <- mkRequest { endpoint: Tags, method: Get }
+        map (map _.tags) $ decode (CAR.object "Tags" { tags: CA.array CA.string }) mbJson
 
 -- | Our operations for managing comments
 instance manageCommentAppM :: ManageComment AppM where
-  getComments slug = do
-    mbJson <- mkRequest { endpoint: Comments slug, method: Get }
-    map (map _.comments)
-      $ decodeWithUser (\u -> CAR.object "Comments" { comments: CA.array (Comment.codec u) }) mbJson
+    getComments slug = do
+        mbJson <- mkRequest { endpoint: Comments slug, method: Get }
+        map (map _.comments)
+            $ decodeWithUser (\u -> CAR.object "Comments" { comments: CA.array (Comment.codec u) }) mbJson
 
-  createComment slug body =
-    let method = Post $ Just $ Codec.encode (CAR.object "CommentBody" { body: CA.string }) { body }
-     in void $ mkAuthRequest { endpoint: Comments slug, method }
+    createComment slug body =
+        let method = Post $ Just $ Codec.encode (CAR.object "CommentBody" { body: CA.string }) { body }
+         in void $ mkAuthRequest { endpoint: Comments slug, method }
 
-  deleteComment slug id =
-    void $ mkAuthRequest { endpoint: Comment slug id, method: Delete }
+    deleteComment slug id =
+        void $ mkAuthRequest { endpoint: Comment slug id, method: Delete }
 
 -- | Our operations for managing articles
 instance manageArticleAppM :: ManageArticle AppM where
-  getArticle slug = do
-    mbJson <- mkRequest { endpoint: Article slug, method: Get }
-    map (map _.article)
-      $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
+    getArticle slug = do
+        mbJson <- mkRequest { endpoint: Article slug, method: Get }
+        map (map _.article)
+            $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
 
-  getArticles fields =
-    mkRequest { endpoint: Articles fields, method: Get }
-      >>= decodeWithUser Article.articlesWithMetadataCodec
+    getArticles fields =
+        mkRequest { endpoint: Articles fields, method: Get }
+            >>= decodeWithUser Article.articlesWithMetadataCodec
 
-  createArticle article = do
-    let
-      codec = CAR.object "Article" { article: Article.articleCodec }
-      method = Post $ Just $ Codec.encode codec { article }
+    createArticle article = do
+        let
+            codec = CAR.object "Article" { article: Article.articleCodec }
+            method = Post $ Just $ Codec.encode codec { article }
 
-    mbJson <- mkAuthRequest { endpoint: Articles noArticleParams, method }
-    map (map _.article)
-      $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
+        mbJson <- mkAuthRequest { endpoint: Articles noArticleParams, method }
+        map (map _.article)
+            $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
 
-  updateArticle slug article = do
-    let
-      codec = CAR.object "Article" { article: Article.articleCodec }
-      method = Put $ Just $ Codec.encode codec { article }
+    updateArticle slug article = do
+        let
+            codec = CAR.object "Article" { article: Article.articleCodec }
+            method = Put $ Just $ Codec.encode codec { article }
 
-    mbJson <- mkAuthRequest { endpoint: Article slug, method }
-    map (map _.article) $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
+        mbJson <- mkAuthRequest { endpoint: Article slug, method }
+        map (map _.article) $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
 
-  deleteArticle slug =
-    void $ mkAuthRequest { endpoint: Article slug, method: Delete }
+    deleteArticle slug =
+        void $ mkAuthRequest { endpoint: Article slug, method: Delete }
 
-  favoriteArticle slug = do
-    mbJson <- mkAuthRequest { endpoint: Favorite slug, method: Post Nothing }
-    map (map _.article) $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
+    favoriteArticle slug = do
+        mbJson <- mkAuthRequest { endpoint: Favorite slug, method: Post Nothing }
+        map (map _.article) $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
 
-  unfavoriteArticle slug = do
-    mbJson <- mkAuthRequest { endpoint: Favorite slug, method: Delete }
-    map (map _.article) $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
+    unfavoriteArticle slug = do
+        mbJson <- mkAuthRequest { endpoint: Favorite slug, method: Delete }
+        map (map _.article) $ decodeWithUser (\u -> CAR.object "Article" { article: Article.articleWithMetadataCodec u }) mbJson
 
-  getCurrentUserFeed params =
-    mkAuthRequest { endpoint: Feed params, method: Get }
-      >>= decodeWithUser Article.articlesWithMetadataCodec
+    getCurrentUserFeed params =
+        mkAuthRequest { endpoint: Feed params, method: Get }
+            >>= decodeWithUser Article.articlesWithMetadataCodec
+
