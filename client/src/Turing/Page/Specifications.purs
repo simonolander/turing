@@ -47,8 +47,8 @@ component = H.mkComponent
                 [ HH.text "New spec" ]
             , HH.ul_ $
                 state.specifications
-                    # map (\spec -> spec.id)
-                    # map (\id -> HH.li_ [ HH.text id ])
+                    <#> (\spec -> spec.id)
+                    <#> (\id -> HH.li_ [ HH.text id ])
             ]
 
     handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
