@@ -34,6 +34,7 @@ data Route
   | Settings
   | Credits
   | Specifications
+  | Specification Slug
   | Editor
   | EditArticle Slug
   | ViewArticle Slug
@@ -57,7 +58,8 @@ routeCodec = root $ sum
   , "Register": "register" / noArgs
   , "Settings": "settings" / noArgs
   , "Credits": "credits" / noArgs
-  , "Specifications": "specifications" / noArgs
+  , "Specification": "specs" / slug segment
+  , "Specifications": "specs" / noArgs
   , "Editor": "editor" / noArgs
   , "EditArticle": "editor" / slug segment
   , "ViewArticle": "article" / slug segment
