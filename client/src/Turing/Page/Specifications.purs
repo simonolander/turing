@@ -16,12 +16,17 @@ import Halogen.HTML.Events as HE
 import Data.Maybe (Maybe(..))
 import Effect.Console as Console
 import Turing.Utils.Random (randomString)
+import Data.Array
+import Turing.Data.Specification as Spec
 
 data Action =
     NewSpecification
 
+type State =
+    { specifications :: Array Spec.Specification
+    }
+
 type Input = Unit
-type State = Unit
 type Message = Void
 
 component
@@ -30,22 +35,30 @@ component
     => Navigate m
     => H.Component HH.HTML q Input Message m
 component = H.mkComponent
-    { initialState: const unit
+    { initialState
     , render
     , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
     }
     where
-    render _ =
+    render state =
         HH.div_
             [ HH.button
                 [ HE.onClick $ const $ Just NewSpecification ]
                 [ HH.text "New spec" ]
+            , HH.ul_ $
+                state.specifications
+                    # map (\spec -> spec.id)
+                    # map (\id -> HH.li_ [ HH.text id ])
             ]
 
     handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
     handleAction action =
         case action of
-            NewSpecification -> H.liftEffect do
-                id <- randomString 6
-                Console.log (id)
+            NewSpecification -> do
+                state <- H.get
+                id <- H.liftEffect $ randomString 6
+                H.modify_ _ { specifications = Spec.createSpecification id : state.specifications }
+
+    initialState :: Input -> State
+    initialState _ = { specifications: [] }
 
