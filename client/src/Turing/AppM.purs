@@ -50,6 +50,7 @@ import Effect.Ref as Ref
 import Routing.Duplex (print)
 import Routing.Hash (setHash)
 import Type.Equality (class TypeEquals, from)
+import Effect.Console as Console
 
 -- | In the capability modules (`Turing.Capability.*`), we wrote some abstract, high-level
 -- | interfaces for business logic that tends to be highly effectful, like resource management and
@@ -305,4 +306,9 @@ instance manageArticleAppM :: ManageArticle AppM where
     getCurrentUserFeed params =
         mkAuthRequest { endpoint: Feed params, method: Get }
             >>= decodeWithUser Article.articlesWithMetadataCodec
+
+-- | Our operations for managing articles
+instance manageSpecAppM :: ManageSpec AppM where
+    createSpec spec = do
+        liftEffect $ Console.log ("show spec")
 

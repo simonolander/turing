@@ -16,6 +16,7 @@ import Turing.Capability.Resource.Article (class ManageArticle)
 import Turing.Capability.Resource.Comment (class ManageComment)
 import Turing.Capability.Resource.Tag (class ManageTag)
 import Turing.Capability.Resource.User (class ManageUser)
+import Turing.Capability.Resource.Spec (class ManageSpec)
 import Turing.Component.Utils (OpaqueSlot)
 import Turing.Data.Profile (Profile)
 import Turing.Data.Route (Route(..), routeCodec)
@@ -79,6 +80,7 @@ component
   => ManageArticle m
   => ManageComment m
   => ManageTag m
+  => ManageSpec m
   => H.Component HH.HTML Query {} Void m
 component = Connect.component $ H.mkComponent
   { initialState: \{ currentUser } -> { route: Nothing, currentUser }
