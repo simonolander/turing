@@ -9,6 +9,7 @@ module Turing.Page.Specs where
 import Prelude
 
 import Turing.Capability.Navigate (class Navigate, navigate)
+import Turing.Capability.Resource.Spec (class ManageSpec, createSpec)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -36,6 +37,7 @@ component
     :: forall q m
     . MonadAff m
     => Navigate m
+    => ManageSpec m
     => H.Component HH.HTML q Input Message m
 component = H.mkComponent
     { initialState
@@ -61,7 +63,7 @@ component = H.mkComponent
                 state <- H.get
                 str <- H.liftEffect $ randomString 6
                 let id = wrap str
-                H.modify_ _ { specs = Spec.createSpec id : state.specs }
+                createSpec $ Spec.createSpec id
                 navigate (Route.Spec id)
 
     initialState :: Input -> State
