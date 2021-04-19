@@ -50,7 +50,11 @@ import Effect.Ref as Ref
 import Routing.Duplex (print)
 import Routing.Hash (setHash)
 import Type.Equality (class TypeEquals, from)
+
 import Effect.Console as Console
+import Web.HTML (window)
+import Web.HTML.Window (localStorage)
+import Web.Storage.Storage (setItem, getItem)
 
 -- | In the capability modules (`Turing.Capability.*`), we wrote some abstract, high-level
 -- | interfaces for business logic that tends to be highly effectful, like resource management and
@@ -310,5 +314,7 @@ instance manageArticleAppM :: ManageArticle AppM where
 -- | Our operations for managing articles
 instance manageSpecAppM :: ManageSpec AppM where
     createSpec spec = do
+        storage <- liftEffect $ window >>= localStorage
+        liftEffect $ setItem "key" "value" storage
         liftEffect $ Console.log ("show spec")
 
