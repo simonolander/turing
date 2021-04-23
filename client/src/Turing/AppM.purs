@@ -318,8 +318,8 @@ instance manageArticleAppM :: ManageArticle AppM where
 -- | Our operations for managing articles
 instance manageSpecAppM :: ManageSpec AppM where
     createSpec spec = liftEffect $ launchAff_ do
-        a <- liftEffect auth
-        signInPromise <- liftEffect $ signInAnonymously a
-        signIn <- toAff signInPromise
-        liftEffect $ Console.log (signIn)
+        promise <- liftEffect do
+            signInAnonymously =<< auth
+        user <- toAff promise
+        liftEffect $ Console.log (user)
 
