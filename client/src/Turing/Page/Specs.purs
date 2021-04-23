@@ -64,7 +64,7 @@ component = H.mkComponent
                 str <- H.liftEffect $ randomString 6
                 let id = wrap str
                 createSpec $ Spec.createSpec id
-                navigate (Route.Spec id)
+--                navigate (Route.Spec id)
 
     initialState :: Input -> State
     initialState _ = { specs: [] }
