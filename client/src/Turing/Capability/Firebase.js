@@ -4,7 +4,7 @@ exports.auth = function () {
     return firebase.auth();
 };
 
-exports.signInAnonymously = function (auth) {
+exports.signInAnonymouslyImpl = function (auth) {
     return function () {
         return auth.signInAnonymously();
     };
