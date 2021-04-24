@@ -34,6 +34,7 @@ newtype AdditionalUserInfo = AdditionalUserInfo
 
 derive instance newtypeAdditionalUserInfo :: Newtype AdditionalUserInfo _
 derive instance genericAdditionalUserInfo :: Generic AdditionalUserInfo _
+
 instance showAdditionalUserInfo :: Show AdditionalUserInfo where
     show = genericShow
 
