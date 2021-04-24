@@ -27,7 +27,7 @@ import Turing.Capability.Resource.Article (class ManageArticle)
 import Turing.Capability.Resource.Comment (class ManageComment)
 import Turing.Capability.Resource.Tag (class ManageTag)
 import Turing.Capability.Resource.Spec (class ManageSpec)
-import Turing.Capability.Resource.User (class ManageUser)
+import Turing.Capability.Resource.User (class ManageUser, class ManageUser2)
 import Turing.Data.Article as Article
 import Turing.Data.Comment as Comment
 import Turing.Data.Log as Log
@@ -318,8 +318,13 @@ instance manageArticleAppM :: ManageArticle AppM where
 -- | Our operations for managing articles
 instance manageSpecAppM :: ManageSpec AppM where
     createSpec spec = liftEffect $ launchAff_ do
-        promise <- liftEffect do
-            signInAnonymously =<< auth
-        user <- toAff promise
-        liftEffect $ Console.log (user)
+        userCredential <- signInAnonymously =<< liftEffect auth
+        liftEffect $ Console.log (show userCredential)
 
+--instance manageUser2AppM :: ManageUser2 AppM where
+--    getCurrentUser2 = liftEffect $ launchAff do
+--        promise <- liftEffect do
+--            signInAnonymously =<< auth
+--        userCredential <- toAff promise
+--        liftEffect $ Console.log (show userCredential)
+--        pure userCredential.user

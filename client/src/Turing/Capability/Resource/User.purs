@@ -19,6 +19,7 @@ import Turing.Data.Profile (Profile, ProfileRep, ProfileWithEmail, Author)
 import Turing.Data.Username (Username)
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
+import Turing.Data.Firebase (User)
 
 -- | This type is a record made up of two row types: the fields that make up a profile, plus the
 -- | fields used for authentication, like their email address and password. See the
@@ -53,3 +54,9 @@ instance manageUserHalogenM :: ManageUser m => ManageUser (HalogenM st act slots
   updateUser = lift <<< updateUser
   followUser = lift <<< followUser
   unfollowUser = lift <<< unfollowUser
+
+class Monad m <= ManageUser2 m where
+    getCurrentUser2 :: m User
+
+instance manageUser2HalogenM :: ManageUser2 m => ManageUser2 (HalogenM st act slots msg m) where
+  getCurrentUser2 = lift getCurrentUser2
