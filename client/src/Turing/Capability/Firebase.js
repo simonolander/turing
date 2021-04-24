@@ -6,6 +6,6 @@ exports.auth = function () {
 
 exports.signInAnonymouslyImpl = function (auth) {
     return function () {
-        return auth.signInAnonymously();
+        return auth.signInAnonymously()
     };
 };
