@@ -1,4 +1,8 @@
-module Turing.Capability.Firebase where
+module Turing.Capability.Firebase
+    ( Auth
+    , auth
+    , signInAnonymously
+    ) where
 
 import Prelude
 import Effect (Effect)
