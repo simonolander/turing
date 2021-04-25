@@ -76,7 +76,7 @@ main = HA.runHalogenAff do
   -- This is a small MVP, so we'll just define pure values like our base URL and log level as
   -- constants. But it's also common to read configuration like this from the build environment.
   let
-    baseUrl = BaseURL "https://Turing.productionready.io"
+    baseUrl = BaseURL "https://turing.productionready.io"
     logLevel = Dev
 
   -- We'll now construct our user environment, state that is accessible anywhere in the application.
