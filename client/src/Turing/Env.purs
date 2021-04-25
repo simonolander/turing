@@ -10,6 +10,7 @@ import Prelude
 
 import Turing.Api.Request (BaseURL)
 import Turing.Data.Profile (Profile)
+import Turing.Data.Firebase (UserCredential)
 import Data.Maybe (Maybe)
 import Effect.Aff.Bus (BusRW)
 import Effect.Ref (Ref)
@@ -51,5 +52,6 @@ derive instance ordLogLevel :: Ord LogLevel
 -- | changes to all subscribed components.
 type UserEnv =
   { currentUser :: Ref (Maybe Profile)
+  , currentUserCredential :: Ref (Maybe UserCredential)
   , userBus :: BusRW (Maybe Profile)
   }

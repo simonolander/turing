@@ -86,7 +86,7 @@ main = HA.runHalogenAff do
     -- since we don't yet have the user's profile.
     currentUser <- Ref.new Nothing
 
-    userCredentialRef <- Ref.new Nothing
+    currentUserCredential <- Ref.new Nothing
 
     -- We'll also create a new bus to broadcast updates when the value of the current user changes;
     -- that allows all subscribed components to stay in sync about this value.
@@ -96,7 +96,7 @@ main = HA.runHalogenAff do
         eitherUserCredential <- signInAnonymously =<< liftEffect auth
         liftEffect case eitherUserCredential of
             Left error -> Console.errorShow error
-            Right userCredential -> Ref.write (Just userCredential) userCredentialRef
+            Right userCredential -> Ref.write (Just userCredential) currentUserCredential
 
     -- Finally, we'll attempt to fill the reference with the user profile associated with the token in
     -- local storage (if there is one). We'll read the token, request the user's profile if we can, and
@@ -122,7 +122,7 @@ main = HA.runHalogenAff do
         liftEffect (Ref.write (hush user) currentUser)
 
     -- We can now return our constructed user environment.
-    pure { currentUser, userBus }
+    pure { currentUser, currentUserCredential, userBus }
 
   -- We now have the three pieces of information necessary to configure our app. Let's create
   -- a record that matches the `Env` type our application requires by filling in these three
