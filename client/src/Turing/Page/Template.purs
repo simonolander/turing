@@ -1,4 +1,4 @@
-module Turing.Component.Router where
+module Turing.Page.Template where
 
 import Prelude
 import Halogen as H
@@ -8,8 +8,8 @@ type State = Unit
 
 type Action = Unit
 
-type Slots =
-    ( home :: forall query. H.Slot query Void Unit )
+type Slots :: forall k. Row k
+type Slots = ()
 
 type Input = Unit
 
