@@ -10,6 +10,7 @@ import Prelude
 
 import Turing.Capability.Navigate (class Navigate, navigate)
 import Turing.Capability.Resource.Spec (class ManageSpec, createSpec)
+import Turing.Capability.Resource.User (class ManageUser2, getCurrentUser2)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -38,6 +39,7 @@ component
     . MonadAff m
     => Navigate m
     => ManageSpec m
+    => ManageUser2 m
     => H.Component HH.HTML q Input Message m
 component = H.mkComponent
     { initialState

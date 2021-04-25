@@ -16,6 +16,7 @@ import Turing.Capability.Resource.Article (class ManageArticle)
 import Turing.Capability.Resource.Comment (class ManageComment)
 import Turing.Capability.Resource.Tag (class ManageTag)
 import Turing.Capability.Resource.User (class ManageUser)
+import Turing.Capability.Resource.User (class ManageUser2)
 import Turing.Capability.Resource.Spec (class ManageSpec)
 import Turing.Component.Utils (OpaqueSlot)
 import Turing.Data.Profile (Profile)
@@ -77,6 +78,7 @@ component
   => LogMessages m
   => Navigate m
   => ManageUser m
+  => ManageUser2 m
   => ManageArticle m
   => ManageComment m
   => ManageTag m

@@ -59,6 +59,7 @@ import Turing.Capability.Firebase
 import Control.Promise (toAff)
 import Effect.Aff
 import Data.Time.Duration
+import Data.Either (Either(..), hush)
 
 -- | In the capability modules (`Turing.Capability.*`), we wrote some abstract, high-level
 -- | interfaces for business logic that tends to be highly effectful, like resource management and
@@ -321,10 +322,7 @@ instance manageSpecAppM :: ManageSpec AppM where
         userCredential <- signInAnonymously =<< liftEffect auth
         liftEffect $ Console.log (show userCredential)
 
---instance manageUser2AppM :: ManageUser2 AppM where
---    getCurrentUser2 = liftEffect $ launchAff do
---        promise <- liftEffect do
---            signInAnonymously =<< auth
---        userCredential <- toAff promise
---        liftEffect $ Console.log (show userCredential)
---        pure userCredential.user
+instance manageUser2AppM :: ManageUser2 AppM where
+    getCurrentUser2 = do
+        userCredential <- liftAff $ signInAnonymously =<< liftEffect auth
+        pure $ hush $ userCredential
