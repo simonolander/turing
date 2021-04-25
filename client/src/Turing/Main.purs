@@ -34,6 +34,10 @@ import Halogen.VDom.Driver (runUI)
 import Routing.Duplex (parse)
 import Routing.Hash (matchesWith)
 
+import Effect.Class (liftEffect)
+import Turing.Capability.Firebase
+import Effect.Console as Console
+
 -- | The `main` function is the first thing run in a PureScript application. In our case, that
 -- | happens when a user loads our application in the browser.
 -- |
@@ -82,9 +86,17 @@ main = HA.runHalogenAff do
     -- since we don't yet have the user's profile.
     currentUser <- Ref.new Nothing
 
+    userCredentialRef <- Ref.new Nothing
+
     -- We'll also create a new bus to broadcast updates when the value of the current user changes;
     -- that allows all subscribed components to stay in sync about this value.
     userBus <- Bus.make
+
+    launchAff_ do
+        eitherUserCredential <- signInAnonymously =<< liftEffect auth
+        liftEffect case eitherUserCredential of
+            Left error -> Console.errorShow error
+            Right userCredential -> Ref.write (Just userCredential) userCredentialRef
 
     -- Finally, we'll attempt to fill the reference with the user profile associated with the token in
     -- local storage (if there is one). We'll read the token, request the user's profile if we can, and
