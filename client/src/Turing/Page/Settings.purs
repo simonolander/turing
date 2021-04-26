@@ -1,4 +1,4 @@
-module Turing.Page.Template where
+module Turing.Page.Settings where
 
 import Prelude
 import Halogen as H
@@ -22,7 +22,7 @@ component = H.mkComponent { initialState, render, eval }
     initialState = const unit
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
-    render = const $ HH.text "Template"
+    render = const $ HH.text "Settings"
 
     eval :: H.HalogenQ query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval

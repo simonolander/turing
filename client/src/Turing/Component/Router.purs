@@ -7,6 +7,9 @@ import Halogen.HTML as HH
 import Data.Maybe (Maybe(..), fromMaybe)
 import Turing.Capability.Navigate (class Navigate)
 import Turing.Data.Route (Route(..), route)
+import Turing.Page.Home as Home
+import Turing.Page.Settings as Settings
+import Type.Proxy (Proxy(..))
 import Routing.Hash (getHash)
 import Routing.Duplex (parse)
 import Data.Either (hush)
@@ -21,7 +24,9 @@ data Action
     = Initialize
 
 type Slots =
-    ( home :: forall query. H.Slot query Void Unit )
+    ( home :: forall query. H.Slot query Void Unit
+    , settings :: forall query. H.Slot query Void Unit
+    )
 
 type Input = Unit
 
@@ -37,7 +42,11 @@ component = H.mkComponent { initialState, render, eval }
     initialState = const { route: Nothing }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
-    render state = HH.text (show state)
+    render state =
+        case state.route of
+            Just Home -> HH.slot (Proxy :: _ "home") unit Home.component unit absurd
+            Just Settings -> HH.slot (Proxy :: _ "settings") unit Settings.component unit absurd
+            Nothing -> HH.text "404 Not found"
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval
