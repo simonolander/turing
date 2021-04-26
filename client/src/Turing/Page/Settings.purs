@@ -22,7 +22,7 @@ component = H.mkComponent { initialState, render, eval }
     initialState = const unit
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
-    render = const $ HH.text "Settings page"
+    render = const $ HH.h1_ [ HH.text "Settings" ]
 
     eval :: H.HalogenQ query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval
