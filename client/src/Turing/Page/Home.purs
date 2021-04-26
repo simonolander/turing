@@ -32,6 +32,5 @@ component = H.mkComponent { initialState, render, eval }
                 [ HH.text "Settings" ]
             ]
 
-
     eval :: H.HalogenQ query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval
