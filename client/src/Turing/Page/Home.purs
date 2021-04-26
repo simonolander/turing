@@ -3,6 +3,8 @@ module Turing.Page.Home where
 import Prelude
 import Halogen as H
 import Halogen.HTML as HH
+import Turing.Data.Route (Route(..))
+import Turing.Component.Html.Utility (safeHref)
 
 type State = Unit
 
@@ -22,7 +24,11 @@ component = H.mkComponent { initialState, render, eval }
     initialState = const unit
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
-    render = const $ HH.text "Home"
+    render _state =
+        HH.a
+            [ safeHref Settings ]
+            [ HH.text "Settings" ]
+
 
     eval :: H.HalogenQ query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval
