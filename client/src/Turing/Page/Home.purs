@@ -25,9 +25,12 @@ component = H.mkComponent { initialState, render, eval }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
     render _state =
-        HH.a
-            [ safeHref Settings ]
-            [ HH.text "Settings" ]
+        HH.div_
+            [ HH.h1_ [ HH.text "Turing" ]
+            , HH.a
+                [ safeHref Settings ]
+                [ HH.text "Settings" ]
+            ]
 
 
     eval :: H.HalogenQ query Action Input ~> H.HalogenM State Action Slots Output m
