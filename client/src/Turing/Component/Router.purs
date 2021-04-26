@@ -37,7 +37,7 @@ component = H.mkComponent { initialState, render, eval }
     initialState = const { route: Nothing }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
-    render = const $ HH.text "My component"
+    render state = HH.text (show state)
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval
