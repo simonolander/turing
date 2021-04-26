@@ -9,6 +9,7 @@ import Data.Show.Generic (genericShow)
 
 data Route
     = Home
+    | Specs
     | Settings
 
 derive instance genericRoute :: Generic Route _
@@ -19,5 +20,6 @@ instance showRoute :: Show Route where
 route :: RouteDuplex' Route
 route = root $ sum
     { "Home": noArgs
+    , "Specs": "specs" / noArgs
     , "Settings": "settings" / noArgs
     }

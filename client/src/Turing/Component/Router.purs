@@ -8,6 +8,7 @@ import Data.Maybe (Maybe(..), fromMaybe)
 import Turing.Capability.Navigate (class Navigate, navigate)
 import Turing.Data.Route (Route(..), route)
 import Turing.Page.Home as Home
+import Turing.Page.Specs as Specs
 import Turing.Page.Settings as Settings
 import Type.Proxy (Proxy(..))
 import Routing.Hash (getHash)
@@ -25,6 +26,7 @@ data Action
 
 type Slots =
     ( home :: forall query. H.Slot query Void Unit
+    , specs :: forall query. H.Slot query Void Unit
     , settings :: forall query. H.Slot query Void Unit
     )
 
@@ -45,6 +47,7 @@ component = H.mkComponent { initialState, render, eval }
     render state =
         case state.route of
             Just Home -> HH.slot (Proxy :: _ "home") unit Home.component unit absurd
+            Just Specs -> HH.slot (Proxy :: _ "specs") unit Specs.component unit absurd
             Just Settings -> HH.slot (Proxy :: _ "settings") unit Settings.component unit absurd
             Nothing -> HH.text "404 Not found"
 
