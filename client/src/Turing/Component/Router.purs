@@ -5,7 +5,7 @@ import Effect.Class (class MonadEffect)
 import Halogen as H
 import Halogen.HTML as HH
 import Data.Maybe (Maybe(..), fromMaybe)
-import Turing.Capability.Navigate (class Navigate)
+import Turing.Capability.Navigate (class Navigate, navigate)
 import Turing.Data.Route (Route(..), route)
 import Turing.Page.Home as Home
 import Turing.Page.Settings as Settings
@@ -62,7 +62,7 @@ component = H.mkComponent { initialState, render, eval }
         handleAction action = case action of
             Initialize -> do
                 initialRoute <- H.liftEffect $ hush <<< (parse route) <$> getHash
-                H.modify_ _ { route = Just $ fromMaybe Home initialRoute }
+                navigate $ fromMaybe Home initialRoute
 
         handleQuery :: forall a. Query a -> H.HalogenM State Action Slots Output m (Maybe a)
         handleQuery query = case query of
