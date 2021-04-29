@@ -15,6 +15,7 @@ import Type.Proxy (Proxy(..))
 import Routing.Hash (getHash)
 import Routing.Duplex (parse)
 import Data.Either (hush)
+import Data.Const (Const)
 
 type State =
     { route :: Maybe Route
@@ -26,9 +27,9 @@ data Action
     = Initialize
 
 type Slots =
-    ( home :: forall query. H.Slot query Void Unit
-    , specs :: forall query. H.Slot query Void Unit
-    , settings :: forall query. H.Slot query Void Unit
+    ( home :: H.Slot (Const Void) Void Unit
+    , specs :: H.Slot (Const Void) Void Unit
+    , settings :: H.Slot (Const Void) Void Unit
     )
 
 type Input = Unit

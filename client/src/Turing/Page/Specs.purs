@@ -23,10 +23,10 @@ type Input = Unit
 
 type Output = Void
 
-component :: forall m query.
+component :: forall m.
     MonadEffect m =>
     MonadAff m =>
-    H.Component query Input Output m
+    H.Component Query Input Output m
 component = H.mkComponent { initialState, render, eval }
     where
     initialState :: Input -> State
@@ -39,7 +39,7 @@ component = H.mkComponent { initialState, render, eval }
             , HH.slot F._formless unit SF.component unit HandleSpecForm
             ]
 
-    eval :: H.HalogenQ query Action Input ~> H.HalogenM State Action Slots Output m
+    eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval
 
 type Spec =
