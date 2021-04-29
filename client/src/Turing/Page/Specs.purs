@@ -36,8 +36,8 @@ component = H.mkComponent { initialState, render, eval }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
     render _state =
-        HH.h1_
-            [ HH.text "Specs"
+        HH.div_
+            [ HH.h1_ [ HH.text "Specs" ]
             , HH.slot F._formless unit SF.component unit HandleSpecForm
             ]
 
