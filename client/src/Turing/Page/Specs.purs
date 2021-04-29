@@ -14,10 +14,10 @@ import Effect.Console as Console
 
 type State = Unit
 
-data Action = HandleSpecForm Spec
+data Action =
+    ClickedNewSpec
 
-type Slots =
-    ( formless :: SF.Slot Unit )
+type Slots = ()
 
 type Query :: forall k. k -> Type
 type Query = Const Void
@@ -40,7 +40,7 @@ component = H.mkComponent { initialState, render, eval }
         HH.div_
             [ HH.h1_ [ HH.text "Specs" ]
             , HH.button
-                [ ]
+                [ HE.onClick $ const ClickedNewSpec ]
                 [ HH.text "New spec" ]
             ]
 
@@ -48,5 +48,5 @@ component = H.mkComponent { initialState, render, eval }
     eval = H.mkEval $ H.defaultEval { handleAction = handleAction }
         where
         handleAction :: Action -> H.HalogenM State Action Slots Output m Unit
-        handleAction (HandleSpecForm spec) = H.liftEffect $ Console.logShow spec
+        handleAction = const (pure unit)
 

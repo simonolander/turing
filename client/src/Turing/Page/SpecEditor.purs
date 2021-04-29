@@ -8,6 +8,7 @@ import Turing.Component.Form.Spec as SF
 import Turing.Data.Spec (Spec)
 import Data.Const (Const)
 import Formless as F
+import Effect.Console (infoShow)
 
 type State = Unit
 
@@ -32,8 +33,12 @@ component = H.mkComponent { initialState, render, eval }
     render :: State -> HH.HTML (H.ComponentSlot Slots AppM Action) Action
     render _state =
         HH.div_
-            [ HH.slot F._formless unit SF.component unit HandleSpecForm
+            [ HH.h1_ [ HH.text "Edit spec" ]
+            , HH.slot F._formless unit SF.component unit HandleSpecForm
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
-    eval = H.mkEval H.defaultEval
+    eval = H.mkEval H.defaultEval { handleAction = handleAction }
+        where
+        handleAction :: Action -> H.HalogenM State Action Slots Output AppM Unit
+        handleAction (HandleSpecForm spec) = H.liftEffect $ infoShow spec
