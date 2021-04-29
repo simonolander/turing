@@ -16,26 +16,26 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
 
-type Contact = { name :: String, text :: String }
+type Spec = { name :: String, text :: String }
 
-newtype ContactForm (r :: Row Type -> Type) f = ContactForm (r
+newtype SpecForm (r :: Row Type -> Type) f = SpecForm (r
   ( name :: f Void String String
   , text :: f Void String String
   ))
-derive instance newtypeContactForm :: Newtype (ContactForm r f) _
+derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
 
-type Slot = H.Slot (F.Query ContactForm (Const Void) ()) Contact
+type Slot = H.Slot (F.Query SpecForm (Const Void) ()) Spec
 
---data Action = HandleContact Contact
+--data Action = HandleSpec Spec
 
 component :: forall m.
     MonadEffect m =>
     MonadAff m =>
-    F.Component ContactForm (Const Void) () Unit Contact m
+    F.Component SpecForm (Const Void) () Unit Spec m
 component = F.component (const formInput) $ F.defaultSpec { render = renderFormless, handleEvent = F.raiseResult }
     where
     formInput =
-      { validators: ContactForm { name: F.noValidation, text: F.noValidation }
+      { validators: SpecForm { name: F.noValidation, text: F.noValidation }
       , initialInputs: Nothing
       }
 
@@ -62,7 +62,7 @@ component = F.component (const formInput) $ F.defaultSpec { render = renderForml
 --  }
 --  where
 --  handleAction = case _ of
---    HandleContact contact -> H.liftEffect $ logShow (contact :: Contact)
+--    HandleSpec contact -> H.liftEffect $ logShow (contact :: Spec)
 --
 --  render =forall m.
             ----    MonadEffect m =>
@@ -75,7 +75,7 @@ component = F.component (const formInput) $ F.defaultSpec { render = renderForml
 --          You can create a full Halogen contact form like this in less than 20 lines of Formless, excluding the render function.  It's type-safe, supports complex types, has validation, and parses to the output type of your choice."
 --          """
 --      , HH.br_
---      , HH.slot F._formless unit formComponent unit HandleContact
+--      , HH.slot F._formless unit formComponent unit HandleSpec
 --      ]
 
 

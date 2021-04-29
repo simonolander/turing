@@ -11,7 +11,7 @@ import Turing.Component.Form.Spec as SF
 
 type State = Unit
 
-data Action = HandleSpecForm SF.Contact
+data Action = HandleSpecForm SF.Spec
 
 type Slots =
     ( formless :: SF.Slot Unit )
@@ -41,8 +41,3 @@ component = H.mkComponent { initialState, render, eval }
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output m
     eval = H.mkEval H.defaultEval
-
-type Spec =
-    { name :: String
-    , maxNumberOfCards :: Int
-    }
