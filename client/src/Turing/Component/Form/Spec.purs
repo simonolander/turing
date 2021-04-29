@@ -50,7 +50,8 @@ component =
                 , HE.onValueInput $ F.setValidate _name
                 ]
             , HH.input
-                [ HP.value $ F.getInput _maxNumberOfCards form
+                [ HP.type_ HP.InputNumber
+                , HP.value $ F.getInput _maxNumberOfCards form
                 , HE.onValueInput $ F.setValidate _maxNumberOfCards
                 ]
             , HH.button
