@@ -45,15 +45,25 @@ component =
 
     render { form } =
         HH.div_
-            [ HH.input
-                [ HP.value $ F.getInput _name form
-                , HE.onValueInput $ F.setValidate _name
+            [ HH.p_
+                [ HH.label_
+                [ HH.text "Name"
+                , HH.input
+                    [ HP.value $ F.getInput _name form
+                    , HE.onValueInput $ F.setValidate _name
+                    ]
                 ]
-            , HH.input
-                [ HP.type_ HP.InputNumber
-                , HP.min 0.0
-                , HP.value $ F.getInput _maxNumberOfCards form
-                , HE.onValueInput $ F.setValidate _maxNumberOfCards
+                ]
+            , HH.p_
+                [ HH.label_
+                    [ HH.text "Maximum number of cards"
+                    , HH.input
+                        [ HP.type_ HP.InputNumber
+                        , HP.min 0.0
+                        , HP.value $ F.getInput _maxNumberOfCards form
+                        , HE.onValueInput $ F.setValidate _maxNumberOfCards
+                        ]
+                    ]
                 ]
             , HH.button
                 [ HE.onClick $ const F.submit ]
