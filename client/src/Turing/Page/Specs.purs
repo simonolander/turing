@@ -4,12 +4,10 @@ import Prelude
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
-import Formless as F
 import Data.Const (Const)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Turing.Component.Form.Spec as SF
-import Turing.Data.Spec (Spec)
 import Effect.Console as Console
 
 type State = Unit
@@ -17,6 +15,7 @@ type State = Unit
 data Action =
     ClickedNewSpec
 
+type Slots :: forall k. Row k
 type Slots = ()
 
 type Query :: forall k. k -> Type
@@ -48,5 +47,6 @@ component = H.mkComponent { initialState, render, eval }
     eval = H.mkEval $ H.defaultEval { handleAction = handleAction }
         where
         handleAction :: Action -> H.HalogenM State Action Slots Output m Unit
-        handleAction = const (pure unit)
+        handleAction ClickedNewSpec = do
+            pure unit
 
