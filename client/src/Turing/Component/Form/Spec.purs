@@ -29,8 +29,8 @@ component :: forall m.
     MonadAff m =>
     F.Component SpecForm (Const Void) () Unit Spec m
 component =
-    F.component (const formInput)
-        $ F.defaultSpec { render = render, handleEvent = F.raiseResult }
+    F.component (const formInput) $ F.defaultSpec
+        { render = render, handleEvent = F.raiseResult }
     where
     formInput =
         { validators: SpecForm
@@ -51,6 +51,7 @@ component =
                 ]
             , HH.input
                 [ HP.type_ HP.InputNumber
+                , HP.min 0.0
                 , HP.value $ F.getInput _maxNumberOfCards form
                 , HE.onValueInput $ F.setValidate _maxNumberOfCards
                 ]
