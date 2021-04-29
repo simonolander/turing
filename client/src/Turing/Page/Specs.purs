@@ -3,6 +3,7 @@ module Turing.Page.Specs where
 import Prelude
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Formless as F
 import Data.Const (Const)
 import Effect.Aff.Class (class MonadAff)
@@ -38,7 +39,9 @@ component = H.mkComponent { initialState, render, eval }
     render _state =
         HH.div_
             [ HH.h1_ [ HH.text "Specs" ]
-            , HH.slot F._formless unit SF.component unit HandleSpecForm
+            , HH.button
+                [ ]
+                [ HH.text "New spec" ]
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output m
