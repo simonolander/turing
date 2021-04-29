@@ -2,6 +2,7 @@ module Turing.Component.Router where
 
 import Prelude
 import Effect.Class (class MonadEffect)
+import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -36,6 +37,7 @@ type Output = Void
 
 component :: forall m.
     MonadEffect m =>
+    MonadAff m =>
     Navigate m =>
     H.Component Query Input Output m
 component = H.mkComponent { initialState, render, eval }
