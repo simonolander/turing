@@ -15,13 +15,13 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
-
-type Spec = { name :: String, text :: String }
+import Turing.Data.Spec (Spec)
+import Data.Int as Int
 
 newtype SpecForm (r :: Row Type -> Type) f = SpecForm (r
-  ( name :: f Void String String
-  , text :: f Void String String
-  ))
+    ( name :: f Void String String
+    , maxNumberOfCards :: f Void String Int
+    ))
 derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
 
 type Slot = H.Slot (F.Query SpecForm (Const Void) ()) Spec
@@ -35,26 +35,32 @@ component :: forall m.
 component = F.component (const formInput) $ F.defaultSpec { render = renderFormless, handleEvent = F.raiseResult }
     where
     formInput =
-      { validators: SpecForm { name: F.noValidation, text: F.noValidation }
-      , initialInputs: Nothing
-      }
+        { validators: SpecForm
+            { name: F.noValidation
+            , maxNumberOfCards: F.hoistFnE_ \str ->
+                case Int.fromString str of
+                    Nothing -> Right 0
+                    Just n -> Right n
+            }
+        , initialInputs: Nothing
+        }
 
     renderFormless st =
-     HH.div_
-       [ HH.input []
-       , HH.textarea []
-       , HH.button
-           [ HE.onClick \_ -> F.submit ]
-           [ HH.text "Submit" ]
-       ]
-     where
-     _name = Proxy :: Proxy "name"
-     _text = Proxy :: Proxy "text"
+        HH.div_
+            [ HH.input []
+            , HH.textarea []
+            , HH.button
+                [ HE.onClick \_ -> F.submit ]
+                [ HH.text "Submit" ]
+            ]
+        where
+        _name = Proxy :: Proxy "name"
+        _text = Proxy :: Proxy "maxNumberOfCards"
 
 --component :: forall m.
---    MonadEffect m =>
---    MonadAff m =>
---    H.Component (Const Void) Unit Void m
+--  MonadEffect m =>
+--  MonadAff m =>
+--  H.Component (Const Void) Unit Void m
 --component = H.mkComponent
 --  { initialState: const unit
 --  , render: const render
@@ -62,20 +68,20 @@ component = F.component (const formInput) $ F.defaultSpec { render = renderForml
 --  }
 --  where
 --  handleAction = case _ of
---    HandleSpec contact -> H.liftEffect $ logShow (contact :: Spec)
+--  HandleSpec contact -> H.liftEffect $ logShow (contact :: Spec)
 --
 --  render =forall m.
-            ----    MonadEffect m =>
-            ----    MonadAff m =>
---    HH.section_
---      [ HH.h1_ [ HH.text "Formless" ]
---      , HH.h2_ [ HH.text "A basic contact form." ]
---      , HH.text
---          """
---          You can create a full Halogen contact form like this in less than 20 lines of Formless, excluding the render function.  It's type-safe, supports complex types, has validation, and parses to the output type of your choice."
---          """
---      , HH.br_
---      , HH.slot F._formless unit formComponent unit HandleSpec
---      ]
+      ----  MonadEffect m =>
+      ----  MonadAff m =>
+--  HH.section_
+--    [ HH.h1_ [ HH.text "Formless" ]
+--    , HH.h2_ [ HH.text "A basic contact form." ]
+--    , HH.text
+--      """
+--      You can create a full Halogen contact form like this in less than 20 lines of Formless, excluding the render function.  It's type-safe, supports complex types, has validation, and parses to the output type of your choice."
+--      """
+--    , HH.br_
+--    , HH.slot F._formless unit formComponent unit HandleSpec
+--    ]
 
 

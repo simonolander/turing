@@ -8,10 +8,12 @@ import Data.Const (Const)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Turing.Component.Form.Spec as SF
+import Turing.Data.Spec (Spec)
+import Effect.Console as Console
 
 type State = Unit
 
-data Action = HandleSpecForm SF.Spec
+data Action = HandleSpecForm Spec
 
 type Slots =
     ( formless :: SF.Slot Unit )
@@ -40,4 +42,8 @@ component = H.mkComponent { initialState, render, eval }
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output m
-    eval = H.mkEval H.defaultEval
+    eval = H.mkEval $ H.defaultEval { handleAction = handleAction }
+        where
+        handleAction :: Action -> H.HalogenM State Action Slots Output m Unit
+        handleAction (HandleSpecForm spec) = H.liftEffect $ Console.logShow spec
+
