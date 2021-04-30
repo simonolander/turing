@@ -18,7 +18,7 @@ type Slots =
     ( formless :: SF.Slot Unit )
 
 type Query :: forall k. k -> Type
-type Query = Const Unit
+type Query = Const Void
 
 type Input = Unit
 
