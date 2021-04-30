@@ -7,12 +7,14 @@ import Effect.Aff (Aff, ParAff)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
 import Turing.Capability.Navigate (class Navigate)
+import Turing.Capability.ManageSpec (class ManageSpec)
 import Turing.Data.Env (Env)
 import Turing.Data.Route as Route
 import Control.Monad.Reader.Class (asks)
 import Type.Equality (class TypeEquals, from)
 import Routing.Hash (setHash)
 import Routing.Duplex (print)
+import Data.Maybe (Maybe(..))
 
 newtype AppM a = AppM (ReaderT Env Aff a)
 
@@ -43,3 +45,6 @@ instance parallelAppM :: Parallel ParAppM AppM where
 
 instance navigateAppM :: Navigate AppM where
   navigate = liftEffect <<< setHash <<< print Route.route
+
+instance manageSpecAppM :: ManageSpec AppM where
+  getSpec = const $ pure Nothing

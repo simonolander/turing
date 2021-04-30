@@ -3,7 +3,7 @@ module Turing.Page.Template where
 import Prelude
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
+--import Halogen.HTML.Events as HE
 import Turing.AppM (AppM)
 import Data.Const (Const)
 
