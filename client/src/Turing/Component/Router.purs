@@ -49,7 +49,7 @@ component = H.mkComponent { initialState, render, eval }
             Just Home -> HH.slot (Proxy :: _ "home") unit Home.component unit absurd
             Just Specs -> HH.slot (Proxy :: _ "specs") unit Specs.component unit absurd
             Just Settings -> HH.slot (Proxy :: _ "settings") unit Settings.component unit absurd
-            Just (SpecEditor _specId) -> HH.slot (Proxy :: _ "specEditor") unit SpecEditor.component unit absurd
+            Just (SpecEditor specId) -> HH.slot (Proxy :: _ "specEditor") unit SpecEditor.component specId absurd
             Nothing -> HH.text "404 Not found"
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM

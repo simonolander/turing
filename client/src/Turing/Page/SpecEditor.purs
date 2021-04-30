@@ -10,7 +10,8 @@ import Data.Const (Const)
 import Formless as F
 import Effect.Console (infoShow)
 
-type State = Unit
+type State =
+    { specId :: String }
 
 data Action = HandleSpecForm Spec
 
@@ -20,7 +21,7 @@ type Slots =
 type Query :: forall k. k -> Type
 type Query = Const Void
 
-type Input = Unit
+type Input = String
 
 type Output = Void
 
@@ -28,13 +29,13 @@ component :: H.Component Query Input Output AppM
 component = H.mkComponent { initialState, render, eval }
     where
     initialState :: Input -> State
-    initialState = const unit
+    initialState = { specId: _ }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots AppM Action) Action
-    render _state =
+    render state =
         HH.div_
             [ HH.h1_ [ HH.text "Edit spec" ]
-            , HH.slot F._formless unit SF.component "unit" HandleSpecForm
+            , HH.slot F._formless unit SF.component state.specId HandleSpecForm
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
