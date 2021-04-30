@@ -3,8 +3,10 @@ module Turing.Data.Spec where
 import Prelude
 import Data.Map (Map)
 
+type SpecId = String
+
 type Spec =
-    { id :: String
+    { id :: SpecId
     , name :: String
     , maxNumberOfCards :: Int
 --    , initialTape :: Map Int Boolean

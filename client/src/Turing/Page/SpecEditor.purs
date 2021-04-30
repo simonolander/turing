@@ -5,7 +5,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Turing.AppM (AppM)
 import Turing.Component.Form.Spec as SF
-import Turing.Data.Spec (Spec)
+import Turing.Data.Spec (Spec, SpecId)
 import Data.Const (Const)
 import Formless as F
 import Effect.Console (infoShow)
@@ -21,7 +21,7 @@ type Slots =
 type Query :: forall k. k -> Type
 type Query = Const Void
 
-type Input = String
+type Input = SpecId
 
 type Output = Void
 

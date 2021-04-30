@@ -6,12 +6,13 @@ import Routing.Duplex (RouteDuplex', root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
 import Data.Show.Generic (genericShow)
+import Turing.Data.Spec (SpecId)
 
 data Route
     = Home
     | Specs
     | Settings
-    | SpecEditor String
+    | SpecEditor SpecId
 
 derive instance genericRoute :: Generic Route _
 derive instance eqRoute :: Eq Route
