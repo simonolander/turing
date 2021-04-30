@@ -4,7 +4,8 @@ import Prelude
 import Data.Map (Map)
 
 type Spec =
-    { name :: String
+    { id :: String
+    , name :: String
     , maxNumberOfCards :: Int
 --    , initialTape :: Map Int Boolean
 --    , goal :: SpecGoal

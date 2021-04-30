@@ -17,7 +17,8 @@ import Turing.Data.Spec (Spec)
 import Data.Int as Int
 
 newtype SpecForm (r :: Row Type -> Type) f = SpecForm (r
-    ( name :: f Void String String
+    ( id :: f Void String String
+    , name :: f Void String String
     , maxNumberOfCards :: f Void String Int
     ))
 derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
@@ -25,7 +26,7 @@ derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
 type Query :: forall k. k -> Type
 type Query = Const Void
 
-type Input = Unit
+type Input = String
 
 type Slot = H.Slot (F.Query SpecForm Query ()) Spec
 
@@ -34,12 +35,16 @@ component :: forall m.
     MonadAff m =>
     F.Component SpecForm Query () Input Spec m
 component =
-    F.component (const formInput) $ F.defaultSpec
-        { render = render, handleEvent = F.raiseResult }
+    F.component mkInput $ F.defaultSpec
+        { render = render
+        , handleEvent = F.raiseResult
+        }
     where
-    formInput =
+    mkInput :: String -> _
+    mkInput specId =
         { validators: SpecForm
-            { name: F.noValidation
+            { id: F.hoistFn_ $ const specId
+            , name: F.noValidation
             , maxNumberOfCards: F.hoistFnE_ \str ->
                 case Int.fromString str of
                     Nothing -> Right 0
@@ -52,12 +57,12 @@ component =
         HH.div_
             [ HH.p_
                 [ HH.label_
-                [ HH.text "Name"
-                , HH.input
-                    [ HP.value $ F.getInput _name form
-                    , HE.onValueInput $ F.setValidate _name
+                    [ HH.text "Name"
+                    , HH.input
+                        [ HP.value $ F.getInput _name form
+                        , HE.onValueInput $ F.setValidate _name
+                        ]
                     ]
-                ]
                 ]
             , HH.p_
                 [ HH.label_

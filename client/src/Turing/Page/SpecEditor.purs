@@ -34,7 +34,7 @@ component = H.mkComponent { initialState, render, eval }
     render _state =
         HH.div_
             [ HH.h1_ [ HH.text "Edit spec" ]
-            , HH.slot F._formless unit SF.component unit HandleSpecForm
+            , HH.slot F._formless unit SF.component "unit" HandleSpecForm
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
