@@ -9,11 +9,17 @@ import Turing.Data.Spec (Spec, SpecId)
 import Data.Const (Const)
 import Formless as F
 import Effect.Console (infoShow)
+import Data.Maybe (Maybe(..))
+import Network.RemoteData (RemoteData(..))
 
 type State =
-    { specId :: String }
+    { specId :: String
+    , spec :: RemoteData Unit Spec
+    }
 
-data Action = HandleSpecForm Spec
+data Action
+    = Initialize
+    | HandleSpecForm Spec
 
 type Slots =
     ( formless :: SF.Slot Unit )
@@ -29,7 +35,7 @@ component :: H.Component Query Input Output AppM
 component = H.mkComponent { initialState, render, eval }
     where
     initialState :: Input -> State
-    initialState = { specId: _ }
+    initialState specId = { specId, spec: NotAsked }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots AppM Action) Action
     render state =
@@ -39,7 +45,11 @@ component = H.mkComponent { initialState, render, eval }
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
-    eval = H.mkEval H.defaultEval { handleAction = handleAction }
+    eval = H.mkEval H.defaultEval
+        { handleAction = handleAction
+        , initialize = Just Initialize
+        }
         where
         handleAction :: Action -> H.HalogenM State Action Slots Output AppM Unit
+        handleAction Initialize = pure unit
         handleAction (HandleSpecForm spec) = H.liftEffect $ infoShow spec
