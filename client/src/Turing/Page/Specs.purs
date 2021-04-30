@@ -9,6 +9,7 @@ import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Turing.Component.Form.Spec as SF
 import Effect.Console as Console
+import Turing.Effect.Random (randomString)
 
 type State = Unit
 
@@ -47,6 +48,6 @@ component = H.mkComponent { initialState, render, eval }
     eval = H.mkEval $ H.defaultEval { handleAction = handleAction }
         where
         handleAction :: Action -> H.HalogenM State Action Slots Output m Unit
-        handleAction ClickedNewSpec = do
-            pure unit
+        handleAction ClickedNewSpec = H.liftEffect do
+            Console.log =<< randomString 7
 

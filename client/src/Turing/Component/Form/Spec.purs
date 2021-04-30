@@ -1,4 +1,4 @@
-module Turing.Component.Form.Spec (Slot, SpecForm(..), component) where
+module Turing.Component.Form.Spec where
 
 import Prelude
 import Data.Const (Const)
@@ -22,12 +22,17 @@ newtype SpecForm (r :: Row Type -> Type) f = SpecForm (r
     ))
 derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
 
-type Slot = H.Slot (F.Query SpecForm (Const Void) ()) Spec
+type Query :: forall k. k -> Type
+type Query = Const Void
+
+type Input = Unit
+
+type Slot = H.Slot (F.Query SpecForm Query ()) Spec
 
 component :: forall m.
     MonadEffect m =>
     MonadAff m =>
-    F.Component SpecForm (Const Void) () Unit Spec m
+    F.Component SpecForm Query () Input Spec m
 component =
     F.component (const formInput) $ F.defaultSpec
         { render = render, handleEvent = F.raiseResult }
