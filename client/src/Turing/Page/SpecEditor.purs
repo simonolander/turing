@@ -6,15 +6,17 @@ import Halogen.HTML as HH
 import Turing.AppM (AppM)
 import Turing.Component.Form.Spec as SF
 import Turing.Data.Spec (Spec, SpecId)
+import Turing.Capability.ManageSpec (getSpec)
 import Data.Const (Const)
 import Formless as F
 import Effect.Console (infoShow)
 import Data.Maybe (Maybe(..))
 import Network.RemoteData (RemoteData(..))
+import Foreign (MultipleErrors)
 
 type State =
     { specId :: String
-    , spec :: RemoteData Unit Spec
+    , spec :: RemoteData MultipleErrors (Maybe Spec)
     }
 
 data Action
@@ -51,5 +53,8 @@ component = H.mkComponent { initialState, render, eval }
         }
         where
         handleAction :: Action -> H.HalogenM State Action Slots Output AppM Unit
-        handleAction Initialize = pure unit
+        handleAction Initialize = do
+            specId <- H.gets _.specId
+            eitherSpec <- getSpec specId
+            pure unit
         handleAction (HandleSpecForm spec) = H.liftEffect $ infoShow spec

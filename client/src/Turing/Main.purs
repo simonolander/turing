@@ -33,7 +33,7 @@ main = HA.runHalogenAff do
                 errorShow error
                 Ref.write (Failure error) ref
             Right maybeUser -> do
-                logShow maybeUser
+--                logShow maybeUser
                 Ref.write (Success maybeUser) ref
         pure ref
 

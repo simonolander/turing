@@ -15,6 +15,10 @@ import Type.Equality (class TypeEquals, from)
 import Routing.Hash (setHash)
 import Routing.Duplex (print)
 import Data.Maybe (Maybe(..))
+import Turing.Firebase.Firestore as Firestore
+import Data.Either (Either(..))
+
+import Debug (traceM)
 
 newtype AppM a = AppM (ReaderT Env Aff a)
 
@@ -40,11 +44,14 @@ derive newtype instance applyParAppM :: Apply ParAppM
 derive newtype instance applicativeParAppM :: Applicative ParAppM
 
 instance parallelAppM :: Parallel ParAppM AppM where
-  parallel (AppM readerT) = ParAppM (parallel readerT)
-  sequential (ParAppM readerT) = AppM (sequential readerT)
+    parallel (AppM readerT) = ParAppM (parallel readerT)
+    sequential (ParAppM readerT) = AppM (sequential readerT)
 
 instance navigateAppM :: Navigate AppM where
-  navigate = liftEffect <<< setHash <<< print Route.route
+    navigate = liftEffect <<< setHash <<< print Route.route
 
 instance manageSpecAppM :: ManageSpec AppM where
-  getSpec = const $ pure Nothing
+    getSpec specId = liftEffect do
+        firestore <- Firestore.firestore
+        traceM firestore
+        pure $ Right Nothing
