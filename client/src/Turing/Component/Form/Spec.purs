@@ -15,13 +15,20 @@ import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
 import Turing.Data.Spec (Spec)
 import Data.Int as Int
+import Data.String as String
 
 newtype SpecForm (r :: Row Type -> Type) f = SpecForm (r
     ( id :: f Void String String
-    , name :: f Void String String
-    , maxNumberOfCards :: f Void String Int
+    , name :: f NameError String String
+    , maxNumberOfCards :: f MaxNumberOfCardsError String Int
     ))
 derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
+
+data MaxNumberOfCardsError
+    = InvalidInt
+    | TooLow
+
+data NameError = EmptyName
 
 type Query :: forall k. k -> Type
 type Query = Const Void
@@ -44,11 +51,16 @@ component =
     mkInput spec =
         { validators: SpecForm
             { id: F.hoistFn_ $ const spec.id
-            , name: F.noValidation
+            , name: F.hoistFnE_ \str ->
+                case String.trim str of
+                    "" -> Left EmptyName
+                    trimmedName -> Right trimmedName
             , maxNumberOfCards: F.hoistFnE_ \str ->
                 case Int.fromString str of
-                    Nothing -> Right 0
-                    Just n -> Right n
+                    Nothing -> Left InvalidInt
+                    Just n
+                        | n < 1 -> Left TooLow
+                        | otherwise -> Right n
             }
         , initialInputs: Just $ F.wrapInputFields
             { id: spec.id
@@ -66,6 +78,10 @@ component =
                         [ HP.value $ F.getInput _name form
                         , HE.onValueInput $ F.setValidate _name
                         ]
+                    , HH.text
+                        case F.getError _name form of
+                            Just EmptyName -> "Cannot be empty"
+                            Nothing -> ""
                     ]
                 ]
             , HH.p_
@@ -77,6 +93,11 @@ component =
                         , HP.value $ F.getInput _maxNumberOfCards form
                         , HE.onValueInput $ F.setValidate _maxNumberOfCards
                         ]
+                    , HH.text
+                        case F.getError _maxNumberOfCards form of
+                            Just InvalidInt -> "Must be a valid integer"
+                            Just TooLow -> "Must be greater than zero"
+                            Nothing -> ""
                     ]
                 ]
             , HH.button
