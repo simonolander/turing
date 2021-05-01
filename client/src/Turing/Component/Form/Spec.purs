@@ -26,7 +26,7 @@ derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
 type Query :: forall k. k -> Type
 type Query = Const Void
 
-type Input = String
+type Input = Spec
 
 type Slot = H.Slot (F.Query SpecForm Query ()) Spec
 
@@ -40,17 +40,21 @@ component =
         , handleEvent = F.raiseResult
         }
     where
-    mkInput :: String -> _
-    mkInput specId =
+    mkInput :: Input -> _
+    mkInput spec =
         { validators: SpecForm
-            { id: F.hoistFn_ $ const specId
+            { id: F.hoistFn_ $ const spec.id
             , name: F.noValidation
             , maxNumberOfCards: F.hoistFnE_ \str ->
                 case Int.fromString str of
                     Nothing -> Right 0
                     Just n -> Right n
             }
-        , initialInputs: Nothing
+        , initialInputs: Just $ F.wrapInputFields
+            { id: spec.id
+            , name: spec.name
+            , maxNumberOfCards: show spec.maxNumberOfCards
+            }
         }
 
     render { form } =

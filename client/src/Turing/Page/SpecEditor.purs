@@ -53,7 +53,7 @@ component = H.mkComponent { initialState, render, eval }
                         , HH.p_ [ HH.text $ "Spec " <> state.specId <> " does not exists." ]
                         ]
                 Success (Just spec) ->
-                    HH.slot F._formless unit SF.component state.specId HandleSpecForm
+                    HH.slot F._formless unit SF.component spec HandleSpecForm
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
