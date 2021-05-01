@@ -27,7 +27,6 @@ import Data.Nullable as Nullable
 
 import Foreign
 import Foreign.Index
-import Debug (traceM)
 
 newtype AppM a = AppM (ReaderT Env Aff a)
 
@@ -70,13 +69,9 @@ instance manageSpecAppM :: ManageSpec AppM where
         documentSnapshotId <- liftEffect $ DocumentSnapshot.id documentSnapshot
         maybeDocumentSnapshotData <- liftEffect $ Nullable.toMaybe
             <$> DocumentSnapshot._data documentSnapshot Nothing
-        let
-            maybeSpec = case maybeDocumentSnapshotData of
+        pure case maybeDocumentSnapshotData of
                 Nothing -> Right Nothing
                 Just documentSnapshotData -> runExcept do
                     name <- documentSnapshotData ! "name" >>= readString
                     maxNumberOfCards <- documentSnapshotData ! "maxNumberOfCards" >>= readInt
                     pure $ Just { id: documentSnapshotId, name, maxNumberOfCards }
-
-        traceM maybeSpec
-        pure maybeSpec
