@@ -22,7 +22,11 @@ import Turing.Firebase.DocumentReference as DocumentReference
 import Turing.Firebase.DocumentSnapshot as DocumentSnapshot
 import Turing.Firebase.Firestore as Firestore
 import Type.Equality (class TypeEquals, from)
+import Control.Monad.Except (runExcept)
+import Data.Nullable as Nullable
 
+import Foreign
+import Foreign.Index
 import Debug (traceM)
 
 newtype AppM a = AppM (ReaderT Env Aff a)
@@ -61,13 +65,18 @@ instance manageSpecAppM :: ManageSpec AppM where
             firestore <- Firestore.firestore
             collectionRef <- Firestore.collection firestore "specs"
             documentRef <- CollectionReference.doc collectionRef specId
-            documentSnapshotPromise <- DocumentReference.get documentRef Nothing
-            pure documentSnapshotPromise
+            DocumentReference.get documentRef Nothing
         documentSnapshot <- H.liftAff $ toAff documentSnapshotPromise
         documentSnapshotId <- liftEffect $ DocumentSnapshot.id documentSnapshot
-        traceM documentSnapshotId
-        documentSnapshotExists <- liftEffect $ DocumentSnapshot.exists documentSnapshot
-        traceM documentSnapshotExists
-        documentSnapshotData <- liftEffect $ DocumentSnapshot._data documentSnapshot Nothing
-        traceM documentSnapshotData
-        pure $ Right Nothing
+        maybeDocumentSnapshotData <- liftEffect $ Nullable.toMaybe
+            <$> DocumentSnapshot._data documentSnapshot Nothing
+        let
+            maybeSpec = case maybeDocumentSnapshotData of
+                Nothing -> Right Nothing
+                Just documentSnapshotData -> runExcept do
+                    name <- documentSnapshotData ! "name" >>= readString
+                    maxNumberOfCards <- documentSnapshotData ! "maxNumberOfCards" >>= readInt
+                    pure $ Just { id: documentSnapshotId, name, maxNumberOfCards }
+
+        traceM maybeSpec
+        pure maybeSpec
