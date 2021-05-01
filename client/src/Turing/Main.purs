@@ -15,11 +15,14 @@ import Turing.Data.Route as Route
 import Turing.AppM (runAppM)
 import Routing.Duplex (parse)
 import Routing.Hash (matchesWith)
-import Turing.Firebase.Auth (onAuthStateChanged)
-import Control.Monad.Except (runExcept)
 
+import Turing.Firebase.Auth (onAuthStateChanged, onAuthStateChangedImpl, authImpl, readMaybeUser, readUser)
+import Control.Monad.Except (runExcept, runExceptT)
 import Debug (traceM)
-import Effect.Console (log)
+import Effect.Console (log, errorShow, logShow)
+import Data.Either
+import Foreign (F, Foreign)
+import Turing.Data.User (User)
 
 main :: Effect Unit
 main = HA.runHalogenAff do
@@ -32,9 +35,9 @@ main = HA.runHalogenAff do
         rootComponent :: H.Component Router.Query Router.Input Router.Output Aff
         rootComponent = H.hoist (runAppM environment) Router.component
 
---    H.liftEffect $ onAuthStateChanged
---        \maybeUser -> runExcept do
---            traceM maybeUser
+    void $ H.liftEffect $ onAuthStateChanged $ case _ of
+        Left error -> errorShow error
+        Right maybeUser -> logShow maybeUser
 
     halogenIO <- runUI rootComponent unit body
     void $ liftEffect $ matchesWith (parse Route.route) \old new ->
