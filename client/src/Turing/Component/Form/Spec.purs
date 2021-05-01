@@ -80,7 +80,7 @@ component =
                         ]
                     , HH.text
                         case F.getError _name form of
-                            Just EmptyName -> "Cannot be empty"
+                            Just EmptyName -> "Name cannot be empty"
                             Nothing -> ""
                     ]
                 ]

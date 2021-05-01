@@ -8,8 +8,10 @@ import Data.Const (Const)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
 import Turing.Component.Form.Spec as SF
-import Effect.Console as Console
-import Turing.Effect.Random (randomString)
+import Turing.Data.Spec (mkSpec)
+import Turing.AppM (AppM)
+
+import Debug (traceM)
 
 type State = Unit
 
@@ -26,16 +28,13 @@ type Input = Unit
 
 type Output = Void
 
-component :: forall m.
-    MonadEffect m =>
-    MonadAff m =>
-    H.Component Query Input Output m
+component :: H.Component Query Input Output AppM
 component = H.mkComponent { initialState, render, eval }
     where
     initialState :: Input -> State
     initialState = const unit
 
-    render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
+    render :: State -> HH.HTML (H.ComponentSlot Slots AppM Action) Action
     render _state =
         HH.div_
             [ HH.h1_ [ HH.text "Specs" ]
@@ -44,10 +43,10 @@ component = H.mkComponent { initialState, render, eval }
                 [ HH.text "New spec" ]
             ]
 
-    eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output m
+    eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
     eval = H.mkEval $ H.defaultEval { handleAction = handleAction }
         where
-        handleAction :: Action -> H.HalogenM State Action Slots Output m Unit
+        handleAction :: Action -> H.HalogenM State Action Slots Output AppM Unit
         handleAction ClickedNewSpec = H.liftEffect do
-            Console.log =<< randomString 7
-
+            spec <- mkSpec
+            traceM spec

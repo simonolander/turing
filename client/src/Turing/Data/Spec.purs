@@ -2,6 +2,8 @@ module Turing.Data.Spec where
 
 import Prelude
 import Data.Map (Map)
+import Turing.Effect.Random (randomString)
+import Effect (Effect)
 
 type SpecId = String
 
@@ -13,6 +15,11 @@ type Spec =
 --    , goal :: SpecGoal
 --    , isTapeModifiable :: Boolean
     }
+
+mkSpec :: Effect Spec
+mkSpec = do
+    id <- randomString 7
+    pure { id, name: "New spec", maxNumberOfCards: 5 }
 
 --data SpecGoal
 --    = Maximize
