@@ -11,19 +11,3 @@ exports.collection = function (firestore) {
         };
     };
 };
-
-exports.get = function (collectionReference) {
-    return function (options) {
-        return function () {
-            return collectionReference.get(options);
-        };
-    };
-};
-
-exports.add = function (collectionReference) {
-    return function (data) {
-        return function () {
-            return collectionReference.add(data);
-        };
-    };
-};

@@ -1,22 +1,27 @@
 module Turing.AppM where
 
-import Prelude
+import Control.Monad.Reader.Class (asks)
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, runReaderT)
 import Control.Parallel (class Parallel, parallel, sequential)
+import Control.Promise (toAff)
+import Data.Either (Either(..))
+import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff, ParAff)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
-import Turing.Capability.Navigate (class Navigate)
+import Halogen as H
+import Prelude
+import Routing.Duplex (print)
+import Routing.Hash (setHash)
 import Turing.Capability.ManageSpec (class ManageSpec)
+import Turing.Capability.Navigate (class Navigate)
 import Turing.Data.Env (Env)
 import Turing.Data.Route as Route
-import Control.Monad.Reader.Class (asks)
-import Type.Equality (class TypeEquals, from)
-import Routing.Hash (setHash)
-import Routing.Duplex (print)
-import Data.Maybe (Maybe(..))
+import Turing.Firebase.CollectionReference as CollectionReference
+import Turing.Firebase.DocumentReference as DocumentReference
+import Turing.Firebase.DocumentSnapshot as DocumentSnapshot
 import Turing.Firebase.Firestore as Firestore
-import Data.Either (Either(..))
+import Type.Equality (class TypeEquals, from)
 
 import Debug (traceM)
 
@@ -51,8 +56,18 @@ instance navigateAppM :: Navigate AppM where
     navigate = liftEffect <<< setHash <<< print Route.route
 
 instance manageSpecAppM :: ManageSpec AppM where
-    getSpec specId = liftEffect do
-        firestore <- Firestore.firestore
-        collection <- Firestore.collection firestore "specs"
-        traceM collection
+    getSpec specId = do
+        documentSnapshotPromise <- liftEffect do
+            firestore <- Firestore.firestore
+            collectionRef <- Firestore.collection firestore "specs"
+            documentRef <- CollectionReference.doc collectionRef specId
+            documentSnapshotPromise <- DocumentReference.get documentRef Nothing
+            pure documentSnapshotPromise
+        documentSnapshot <- H.liftAff $ toAff documentSnapshotPromise
+        documentSnapshotId <- liftEffect $ DocumentSnapshot.id documentSnapshot
+        traceM documentSnapshotId
+        documentSnapshotExists <- liftEffect $ DocumentSnapshot.exists documentSnapshot
+        traceM documentSnapshotExists
+        documentSnapshotData <- liftEffect $ DocumentSnapshot._data documentSnapshot Nothing
+        traceM documentSnapshotData
         pure $ Right Nothing
