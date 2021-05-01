@@ -3,25 +3,17 @@ module Turing.Firebase.Auth where
 import Prelude
 import Control.Monad.Except (runExcept)
 import Effect (Effect)
-import Effect.Aff (Aff, never, bracket)
-import Foreign (Foreign, F, readString, isNull, readBoolean)
+import Foreign (Foreign, F, readString, isNull, readBoolean, MultipleErrors)
 import Foreign.Index ((!))
 import Control.Promise (Promise)
 import Turing.Data.User (User)
-import Turing.Data.UserCredential (UserCredential)
 import Data.Maybe (Maybe(..))
-import Effect.Aff.Class (class MonadAff)
-import Halogen as H
-import Halogen.Subscription as HS
-import Data.Either
+import Data.Either (Either)
 
 foreign import data Auth :: Type
 foreign import authImpl :: Effect Auth
 
 foreign import signInAnonymouslyImpl :: Auth -> Effect (Promise Foreign)
-
-signInAnonymously :: Aff UserCredential
-signInAnonymously = never
 
 foreign import onAuthStateChangedImpl :: forall a. Auth -> (Foreign -> a) -> Effect (Effect Unit)
 
@@ -31,7 +23,7 @@ foreign import onAuthStateChangedImpl :: forall a. Auth -> (Foreign -> a) -> Eff
 --    _ <- H.liftAff $ H.forkAff do
 --    pure emitter
 
-onAuthStateChanged :: forall a. (Either _ (Maybe User) -> a) -> Effect (Effect Unit)
+onAuthStateChanged :: forall a. (Either MultipleErrors (Maybe User) -> a) -> Effect (Effect Unit)
 onAuthStateChanged callback = do
     auth <- authImpl
     onAuthStateChangedImpl auth callback'

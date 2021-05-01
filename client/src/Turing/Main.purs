@@ -15,10 +15,10 @@ import Turing.Data.Route as Route
 import Turing.AppM (runAppM)
 import Routing.Duplex (parse)
 import Routing.Hash (matchesWith)
-
 import Turing.Firebase.Auth (onAuthStateChanged)
 import Effect.Console (errorShow, logShow)
 import Data.Either (Either(..))
+import Network.RemoteData (RemoteData(..))
 
 main :: Effect Unit
 main = HA.runHalogenAff do
@@ -26,7 +26,10 @@ main = HA.runHalogenAff do
 
     let
         environment :: Env
-        environment = { logLevel: Dev }
+        environment =
+            { logLevel: Dev
+            , user: NotAsked
+            }
 
         rootComponent :: H.Component Router.Query Router.Input Router.Output Aff
         rootComponent = H.hoist (runAppM environment) Router.component
