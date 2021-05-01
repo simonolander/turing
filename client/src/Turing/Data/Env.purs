@@ -5,10 +5,11 @@ import Network.RemoteData (RemoteData)
 import Data.Maybe (Maybe)
 import Turing.Data.User (User)
 import Foreign (MultipleErrors)
+import Effect.Ref (Ref)
 
 type Env =
     { logLevel :: LogLevel
-    , user :: RemoteData MultipleErrors (Maybe User)
+    , userRef :: Ref (RemoteData MultipleErrors (Maybe User))
     }
 
 data LogLevel
