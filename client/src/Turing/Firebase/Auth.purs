@@ -9,6 +9,7 @@ import Control.Promise (Promise)
 import Turing.Data.User (User)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either)
+import Turing.Effect.Foreign (readNullable)
 
 foreign import data Auth :: Type
 foreign import authImpl :: Effect Auth
@@ -39,10 +40,7 @@ readMaybeUser value
 readUser :: Foreign -> F User
 readUser value = do
     uid <- value ! "uid" >>= readString
-    displayName <- readDisplayName value
+    displayName <- value ! "displayName" >>= (readNullable readString)
     isAnonymous <- value ! "isAnonymous" >>= readBoolean
     pure { uid, displayName, isAnonymous }
-    where
-    readDisplayName :: Foreign -> F (Maybe String)
-    readDisplayName _ = pure Nothing
 

@@ -26,7 +26,8 @@ component = H.mkComponent { initialState, render, eval }
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
     render _state =
         HH.div_
-            [ HH.h1_ [ HH.text "Turing" ]
+            [ HH.header_
+                [ HH.h1_ [ HH.text "Turing" ] ]
             , HH.p_
                 [ HH.a
                     [ safeHref Specs ]
