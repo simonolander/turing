@@ -53,5 +53,6 @@ instance navigateAppM :: Navigate AppM where
 instance manageSpecAppM :: ManageSpec AppM where
     getSpec specId = liftEffect do
         firestore <- Firestore.firestore
-        traceM firestore
+        collection <- Firestore.collection firestore "specs"
+        traceM collection
         pure $ Right Nothing
