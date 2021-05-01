@@ -16,13 +16,9 @@ import Turing.AppM (runAppM)
 import Routing.Duplex (parse)
 import Routing.Hash (matchesWith)
 
-import Turing.Firebase.Auth (onAuthStateChanged, onAuthStateChangedImpl, authImpl, readMaybeUser, readUser)
-import Control.Monad.Except (runExcept, runExceptT)
-import Debug (traceM)
-import Effect.Console (log, errorShow, logShow)
-import Data.Either
-import Foreign (F, Foreign)
-import Turing.Data.User (User)
+import Turing.Firebase.Auth (onAuthStateChanged)
+import Effect.Console (errorShow, logShow)
+import Data.Either (Either(..))
 
 main :: Effect Unit
 main = HA.runHalogenAff do
