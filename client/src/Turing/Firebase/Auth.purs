@@ -31,12 +31,12 @@ foreign import onAuthStateChangedImpl :: forall a. Auth -> (Foreign -> a) -> Eff
 --    _ <- H.liftAff $ H.forkAff do
 --    pure emitter
 
-onAuthStateChanged :: (Either _ (Maybe User) -> Effect Unit) -> Effect (Effect Unit)
+onAuthStateChanged :: forall a. (Either _ (Maybe User) -> a) -> Effect (Effect Unit)
 onAuthStateChanged callback = do
     auth <- authImpl
     onAuthStateChangedImpl auth callback'
     where
-    callback' :: Foreign -> Effect Unit
+    callback' :: Foreign -> a
     callback' foreignValue = callback $ runExcept (readMaybeUser foreignValue)
 
 readMaybeUser :: Foreign -> F (Maybe User)
