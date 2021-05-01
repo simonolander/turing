@@ -73,7 +73,7 @@ component =
                     [ HH.text "Maximum number of cards"
                     , HH.input
                         [ HP.type_ HP.InputNumber
-                        , HP.min 0.0
+                        , HP.min 1.0
                         , HP.value $ F.getInput _maxNumberOfCards form
                         , HE.onValueInput $ F.setValidate _maxNumberOfCards
                         ]
@@ -81,7 +81,7 @@ component =
                 ]
             , HH.button
                 [ HE.onClick $ const F.submit ]
-                [ HH.text "Submit" ]
+                [ HH.text "Save spec" ]
             ]
         where
         _name = (Proxy :: Proxy "name")
