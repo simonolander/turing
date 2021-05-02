@@ -6,7 +6,10 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Data.Const (Const)
 import Turing.Data.Spec (mkSpec)
+import Turing.Data.Route (Route(..))
 import Turing.AppM (AppM)
+import Turing.Capability.ManageSpec (saveSpec)
+import Turing.Capability.Navigate (navigate)
 
 import Debug (traceM)
 
@@ -44,6 +47,7 @@ component = H.mkComponent { initialState, render, eval }
     eval = H.mkEval $ H.defaultEval { handleAction = handleAction }
         where
         handleAction :: Action -> H.HalogenM State Action Slots Output AppM Unit
-        handleAction ClickedNewSpec = H.liftEffect do
-            spec <- mkSpec
-            traceM spec
+        handleAction ClickedNewSpec = do
+            spec <- H.liftEffect mkSpec
+            saveSpec spec
+            navigate $ SpecEditor spec.id
