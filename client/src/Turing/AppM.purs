@@ -24,6 +24,8 @@ import Turing.Firebase.Firestore as Firestore
 import Type.Equality (class TypeEquals, from)
 import Control.Monad.Except (runExcept)
 import Data.Nullable as Nullable
+import Data.Argonaut.Decode (decodeJson)
+import Data.Argonaut.Encode (encodeJson)
 
 import Foreign
 import Foreign.Index
@@ -66,12 +68,16 @@ instance manageSpecAppM :: ManageSpec AppM where
             documentRef <- CollectionReference.doc collectionRef specId
             DocumentReference.get documentRef Nothing
         documentSnapshot <- H.liftAff $ toAff documentSnapshotPromise
-        documentSnapshotId <- liftEffect $ DocumentSnapshot.id documentSnapshot
         maybeDocumentSnapshotData <- liftEffect $ Nullable.toMaybe
             <$> DocumentSnapshot._data documentSnapshot Nothing
         pure case maybeDocumentSnapshotData of
-                Nothing -> Right Nothing
-                Just documentSnapshotData -> runExcept do
-                    name <- documentSnapshotData ! "name" >>= readString
-                    maxNumberOfCards <- documentSnapshotData ! "maxNumberOfCards" >>= readInt
-                    pure $ Just { id: documentSnapshotId, name, maxNumberOfCards }
+            Nothing -> Right Nothing
+            Just documentSnapshotData -> decodeJson documentSnapshotData
+
+    saveSpec spec = do
+        setPromise <- liftEffect do
+            firestore <- Firestore.firestore
+            collectionRef <- Firestore.collection firestore "specs"
+            documentRef <- CollectionReference.doc collectionRef spec.id
+            DocumentReference.set documentRef (encodeJson spec)
+        H.liftAff $ toAff setPromise

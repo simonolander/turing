@@ -1,9 +1,11 @@
 --| See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot
 module Turing.Firebase.DocumentSnapshot where
 
+import Prelude
 import Effect (Effect)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable)
+import Control.Promise (Promise)
 
 foreign import data DocumentSnapshot :: Type -> Type
 foreign import data SnapshotOptions :: Type

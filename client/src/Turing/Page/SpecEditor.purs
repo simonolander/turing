@@ -12,11 +12,11 @@ import Formless as F
 import Effect.Console (infoShow)
 import Data.Maybe (Maybe(..))
 import Network.RemoteData (RemoteData(..), fromEither)
-import Foreign (MultipleErrors)
+import Data.Argonaut.Decode (JsonDecodeError)
 
 type State =
     { specId :: String
-    , spec :: RemoteData MultipleErrors (Maybe Spec)
+    , spec :: RemoteData JsonDecodeError (Maybe Spec)
     }
 
 data Action

@@ -5,9 +5,6 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Data.Const (Const)
-import Effect.Aff.Class (class MonadAff)
-import Effect.Class (class MonadEffect)
-import Turing.Component.Form.Spec as SF
 import Turing.Data.Spec (mkSpec)
 import Turing.AppM (AppM)
 

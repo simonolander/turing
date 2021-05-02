@@ -6,7 +6,6 @@ import Control.Promise (Promise)
 import Turing.Firebase.DocumentReference (DocumentReference)
 
 foreign import data CollectionReference :: Type -> Type
-foreign import data DocumentData :: Type
 
 type DocumentPath = String
 

@@ -16,6 +16,7 @@ type Spec =
 --    , isTapeModifiable :: Boolean
     }
 
+--| Returns a new spec with a random id
 mkSpec :: Effect Spec
 mkSpec = do
     id <- randomString 7

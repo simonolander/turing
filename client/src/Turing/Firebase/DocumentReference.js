@@ -7,3 +7,11 @@ exports.get = function (documentReference) {
         }
     }
 };
+
+exports.set = function (documentReference) {
+    return function (data) {
+        return function () {
+            return documentReference.set(data, {});
+        };
+    };
+};
