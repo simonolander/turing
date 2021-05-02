@@ -15,6 +15,7 @@ import Turing.Capability.Navigate (navigate)
 import Network.RemoteData (RemoteData(..), isLoading)
 import Effect.Exception (Error)
 import Turing.Effect.Error (logError)
+import Turing.Component.Html.Utility
 
 type State =
     { newSpecCreation :: RemoteData Error Void
@@ -48,9 +49,10 @@ component = H.mkComponent { initialState, render, eval }
                 , HP.disabled $ isLoading state.newSpecCreation
                 ]
                 [ HH.text "New spec" ]
-            , HH.text case state.newSpecCreation of
-                Failure error -> "Error when creating spec, see logs for details."
-                _ -> ""
+            , whenFailure state.newSpecCreation
+                $ const $ HH.p_
+                    [ HH.text "Something went wrong when creating the spec. Check the logs for details."
+                    ]
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
