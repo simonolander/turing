@@ -12,12 +12,13 @@ import Formless as F
 import Effect.Console (infoShow)
 import Data.Maybe (Maybe(..))
 import Network.RemoteData (RemoteData(..), fromEither)
-import Data.Argonaut.Decode (JsonDecodeError)
 import Data.Either (Either(..))
+import Effect.Exception (Error)
+import Turing.Effect.Error (logError)
 
 type State =
     { specId :: String
-    , spec :: RemoteData JsonDecodeError (Maybe Spec)
+    , spec :: RemoteData Error (Maybe Spec)
     }
 
 data Action
@@ -47,7 +48,12 @@ component = H.mkComponent { initialState, render, eval }
             , case state.spec of
                 NotAsked -> HH.text "Not asked"
                 Loading -> HH.text "Loading spec"
-                Failure error -> HH.text (show error)
+                Failure error ->
+                    HH.div_
+                        [ HH.h2_ [ HH.text "Error loading spec" ]
+                        , HH.p_
+                            [ HH.text "Something went wrong when loading the spec. Check the logs for details." ]
+                        ]
                 Success (Nothing) ->
                     HH.div_
                         [ HH.h2_ [ HH.text "404 Not found" ]
@@ -67,7 +73,14 @@ component = H.mkComponent { initialState, render, eval }
         handleAction Initialize = do
             specId <- H.gets _.specId
             H.modify_ _ { spec = Loading }
-            eitherSpec <- getSpec specId
-            H.modify_ _ { spec = fromEither eitherSpec}
-        handleAction (HandleSpecForm spec) =
-            void $ saveSpec spec
+            result <- getSpec specId
+            case result of
+                Left error -> do
+                    H.liftEffect $ logError error
+                    H.modify_ _ { spec = Failure error }
+                Right spec -> H.modify_ _ { spec = Success spec }
+        handleAction (HandleSpecForm spec) = do
+            result <- saveSpec spec
+            H.liftEffect case result of
+                Left error -> logError error
+                Right error -> pure unit

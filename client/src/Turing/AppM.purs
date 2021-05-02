@@ -27,6 +27,8 @@ import Control.Monad.Except (runExcept)
 import Data.Nullable as Nullable
 import Data.Argonaut.Decode (decodeJson)
 import Data.Argonaut.Encode (encodeJson)
+import Effect.Exception as Ex
+import Data.Bifunctor (lmap, rmap)
 
 import Debug (traceM)
 
@@ -67,12 +69,19 @@ instance manageSpecAppM :: ManageSpec AppM where
             collectionRef <- Firestore.collection firestore "specs"
             documentRef <- CollectionReference.doc collectionRef specId
             DocumentReference.get documentRef Nothing
-        documentSnapshot <- H.liftAff $ toAff documentSnapshotPromise
-        maybeDocumentSnapshotData <- liftEffect $ Nullable.toMaybe
-            <$> DocumentSnapshot._data documentSnapshot Nothing
-        pure case maybeDocumentSnapshotData of
-            Nothing -> Right Nothing
-            Just documentSnapshotData -> decodeJson documentSnapshotData
+        result <- H.liftAff $ try $ toAff documentSnapshotPromise
+        case result of
+            Left error -> pure $ Left error
+            Right documentSnapshot -> do
+                maybeDocumentSnapshotData <- liftEffect $ Nullable.toMaybe
+                    <$> DocumentSnapshot._data documentSnapshot Nothing
+                pure case maybeDocumentSnapshotData of
+                    Nothing -> Right Nothing
+                    Just documentSnapshotData ->
+                        decodeJson documentSnapshotData
+                            # lmap show
+                            # lmap Ex.error
+
 
     saveSpec spec = do
         setPromise <- liftEffect do
