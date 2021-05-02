@@ -19,6 +19,7 @@ import Turing.Effect.Error (logError)
 type State =
     { specId :: String
     , spec :: RemoteData Error (Maybe Spec)
+    , savingSpec :: RemoteData Error Unit
     }
 
 data Action
@@ -39,7 +40,7 @@ component :: H.Component Query Input Output AppM
 component = H.mkComponent { initialState, render, eval }
     where
     initialState :: Input -> State
-    initialState specId = { specId, spec: NotAsked }
+    initialState specId = { specId, spec: NotAsked, savingSpec: NotAsked }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots AppM Action) Action
     render state =
@@ -80,7 +81,10 @@ component = H.mkComponent { initialState, render, eval }
                     H.modify_ _ { spec = Failure error }
                 Right spec -> H.modify_ _ { spec = Success spec }
         handleAction (HandleSpecForm spec) = do
+            H.modify_ _ { savingSpec = Loading }
             result <- saveSpec spec
-            H.liftEffect case result of
-                Left error -> logError error
-                Right error -> pure unit
+            case result of
+                Left error -> do
+                    H.liftEffect $ logError error
+                    H.modify_ _ { savingSpec = Failure error }
+                Right error -> H.modify_ _ { savingSpec = Success unit }
