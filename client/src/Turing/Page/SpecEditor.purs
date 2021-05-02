@@ -6,7 +6,7 @@ import Halogen.HTML as HH
 import Turing.AppM (AppM)
 import Turing.Component.Form.Spec as SF
 import Turing.Data.Spec (Spec, SpecId)
-import Turing.Capability.ManageSpec (getSpec)
+import Turing.Capability.ManageSpec (getSpec, saveSpec)
 import Data.Const (Const)
 import Formless as F
 import Effect.Console (infoShow)
@@ -68,4 +68,4 @@ component = H.mkComponent { initialState, render, eval }
             H.modify_ _ { spec = Loading }
             eitherSpec <- getSpec specId
             H.modify_ _ { spec = fromEither eitherSpec}
-        handleAction (HandleSpecForm spec) = H.liftEffect $ infoShow spec
+        handleAction (HandleSpecForm spec) = saveSpec spec
