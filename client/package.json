@@ -1,7 +1,7 @@
 {
   "private": true,
   "devDependencies": {
-    "purescript": "0.13.8",
+    "purescript": "0.14.1",
     "spago": "0.19.2"
   },
   "scripts": {
@@ -9,7 +9,8 @@
     "test": "spago test",
     "bundle": "rm -rf dist && spago bundle-app --to index.js",
     "postinstall": "npm run build",
-    "watch": "spago build --watch --clear-screen"
+    "watch": "spago build --watch --clear-screen",
+    "clean": "rm -rf .spago node_modules output"
   },
   "dependencies": {
     "decimal.js": "^10.2.0",

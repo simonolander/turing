@@ -1,73 +1,53 @@
--- | The credits page display everyone that helped out making this application
--- |
--- |  - IntelliJ plugin team
--- |  - Halogen team
--- |  - Halogen real world
--- |
 module Turing.Page.Specs where
 
 import Prelude
-
-import Turing.Capability.Navigate (class Navigate, navigate)
-import Turing.Capability.Resource.Spec (class ManageSpec, createSpec)
-import Turing.Capability.Resource.User (class ManageUser2, getCurrentUser2)
-import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
-import Data.Maybe (Maybe(..))
-import Effect.Console as Console
-import Turing.Utils.Random (randomString)
-import Turing.Data.Route as Route
-import Data.Array
-import Data.Newtype (wrap)
-import Turing.Data.Spec as Spec
-import Data.Show (show)
+import Data.Const (Const)
+import Turing.Data.Spec (mkSpec)
+import Turing.Data.Route (Route(..))
+import Turing.AppM (AppM)
+import Turing.Capability.ManageSpec (saveSpec)
+import Turing.Capability.Navigate (navigate)
+
+import Debug (traceM)
+
+type State = Unit
 
 data Action =
-    NewSpec
+    ClickedNewSpec
 
-type State =
-    { specs :: Array Spec.Spec
-    }
+type Slots :: forall k. Row k
+type Slots = ()
+
+type Query :: forall k. k -> Type
+type Query = Const Void
 
 type Input = Unit
-type Message = Void
 
-component
-    :: forall q m
-    . MonadAff m
-    => Navigate m
-    => ManageSpec m
-    => ManageUser2 m
-    => H.Component HH.HTML q Input Message m
-component = H.mkComponent
-    { initialState
-    , render
-    , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
-    }
+type Output = Void
+
+component :: H.Component Query Input Output AppM
+component = H.mkComponent { initialState, render, eval }
     where
-    render state =
+    initialState :: Input -> State
+    initialState = const unit
+
+    render :: State -> HH.HTML (H.ComponentSlot Slots AppM Action) Action
+    render _state =
         HH.div_
-            [ HH.button
-                [ HE.onClick $ const $ Just NewSpec ]
+            [ HH.h1_ [ HH.text "Specs" ]
+            , HH.button
+                [ HE.onClick $ const ClickedNewSpec ]
                 [ HH.text "New spec" ]
-            , HH.ul_ $
-                state.specs
-                    <#> (\spec -> show spec.id)
-                    <#> (\id -> HH.li_ [ HH.text id ])
             ]
 
-    handleAction :: forall slots. Action -> H.HalogenM State Action slots Message m Unit
-    handleAction action =
-        case action of
-            NewSpec -> do
-                state <- H.get
-                str <- H.liftEffect $ randomString 6
-                let id = wrap str
-                createSpec $ Spec.createSpec id
---                navigate (Route.Spec id)
-
-    initialState :: Input -> State
-    initialState _ = { specs: [] }
-
+    eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
+    eval = H.mkEval $ H.defaultEval { handleAction = handleAction }
+        where
+        handleAction :: Action -> H.HalogenM State Action Slots Output AppM Unit
+        handleAction ClickedNewSpec = do
+            spec <- H.liftEffect mkSpec
+            saveSpec spec
+            navigate $ SpecEditor spec.id
