@@ -13,6 +13,7 @@ import Effect.Console (infoShow)
 import Data.Maybe (Maybe(..))
 import Network.RemoteData (RemoteData(..), fromEither)
 import Data.Argonaut.Decode (JsonDecodeError)
+import Data.Either (Either(..))
 
 type State =
     { specId :: String
@@ -68,4 +69,5 @@ component = H.mkComponent { initialState, render, eval }
             H.modify_ _ { spec = Loading }
             eitherSpec <- getSpec specId
             H.modify_ _ { spec = fromEither eitherSpec}
-        handleAction (HandleSpecForm spec) = saveSpec spec
+        handleAction (HandleSpecForm spec) =
+            void $ saveSpec spec

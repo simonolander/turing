@@ -1,12 +1,13 @@
 module Turing.AppM where
 
+import Prelude
 import Control.Monad.Reader.Class (asks)
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, runReaderT)
 import Control.Parallel (class Parallel, parallel, sequential)
 import Control.Promise (toAff)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Effect.Aff (Aff, ParAff)
+import Effect.Aff (Aff, ParAff, try)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
 import Halogen as H
@@ -27,8 +28,7 @@ import Data.Nullable as Nullable
 import Data.Argonaut.Decode (decodeJson)
 import Data.Argonaut.Encode (encodeJson)
 
-import Foreign
-import Foreign.Index
+import Debug (traceM)
 
 newtype AppM a = AppM (ReaderT Env Aff a)
 
@@ -80,4 +80,4 @@ instance manageSpecAppM :: ManageSpec AppM where
             collectionRef <- Firestore.collection firestore "specs"
             documentRef <- CollectionReference.doc collectionRef spec.id
             DocumentReference.set documentRef (encodeJson spec)
-        H.liftAff $ toAff setPromise
+        H.liftAff $ try $ toAff setPromise
