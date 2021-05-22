@@ -22,6 +22,7 @@ type State =
 data Action
     = Initialize
     | HandleSpecForm Spec
+    | ClickedTestRun
 
 type Slots =
     ( formless :: SF.Slot Unit )
@@ -66,6 +67,7 @@ component = H.mkComponent { initialState, render, eval }
                 Loading -> HH.p_ [ HH.text "Saving spec" ]
                 Failure error -> HH.p_ [ HH.text error ]
                 Success _ -> HH.p_ [ HH.text "Spec saved 👌" ]
+            , HH.button_ [ HH.text "Test run" ]
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
@@ -84,3 +86,4 @@ component = H.mkComponent { initialState, render, eval }
             H.modify_ _ { savingSpec = Loading }
             result <- saveSpec spec
             H.modify_ _ { savingSpec = fromEither result }
+        handleAction ClickedTestRun = pure unit
