@@ -7,3 +7,14 @@ exports.doc = function (collectionReference) {
         };
     };
 };
+
+/**
+ * See https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference#get
+ */
+exports.get = function (collectionReference) {
+    return function (options) {
+        return function () {
+            return collectionReference.get(options);
+        };
+    };
+};
