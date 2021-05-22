@@ -1,3 +1,4 @@
+--| See https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference
 module Turing.Firebase.CollectionReference where
 
 import Prelude
