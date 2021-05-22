@@ -1,5 +1,6 @@
 "use strict";
 
+// See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference#get
 exports.get = function (documentReference) {
     return function (options) {
         return function () {
@@ -8,6 +9,7 @@ exports.get = function (documentReference) {
     }
 };
 
+// See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference#set
 exports.set = function (documentReference) {
     return function (data) {
         return function () {

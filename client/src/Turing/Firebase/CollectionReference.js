@@ -1,5 +1,6 @@
 "use strict";
 
+// See https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference#doc
 exports.doc = function (collectionReference) {
     return function (documentPath) {
         return function () {
@@ -8,9 +9,7 @@ exports.doc = function (collectionReference) {
     };
 };
 
-/**
- * See https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference#get
- */
+// See https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference#get
 exports.get = function (collectionReference) {
     return function (options) {
         return function () {
