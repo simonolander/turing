@@ -61,6 +61,11 @@ component = H.mkComponent { initialState, render, eval }
                         ]
                 Success (Just spec) ->
                     HH.slot F._formless unit SF.component spec HandleSpecForm
+            , case state.savingSpec of
+                NotAsked -> HH.text ""
+                Loading -> HH.p_ [ HH.text "Saving spec" ]
+                Failure error -> HH.p_ [ HH.text error ]
+                Success _ -> HH.p_ [ HH.text "Spec saved 👌" ]
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
