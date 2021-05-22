@@ -1,9 +1,10 @@
 module Turing.Data.Spec where
 
 import Prelude
+
 import Data.Map (Map)
-import Turing.Effect.Random (randomString)
 import Effect (Effect)
+import Turing.Effect.Random (randomString)
 
 type SpecId = String
 

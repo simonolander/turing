@@ -1,17 +1,16 @@
 "use strict";
 
+// See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot#id
 exports.id = function (documentSnapshot) {
-    return function () {
-        return documentSnapshot.id
-    }
+    return documentSnapshot.id
 }
 
+// See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot#exists
 exports.exists = function (documentSnapshot) {
-    return function () {
-        return documentSnapshot.exists
-    }
+    return documentSnapshot.exists
 }
 
+// See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentSnapshot#data
 exports._data = function (documentSnapshot) {
     return function (options) {
         return function () {

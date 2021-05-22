@@ -10,8 +10,10 @@ import Effect.Exception (Error)
 
 class Monad m <= ManageSpec m where
     getSpec :: SpecId -> m (Either Error (Maybe Spec))
+    getSpecs :: m (Either String (Array Spec))
     saveSpec :: Spec -> m (Either Error Unit)
 
 instance manageSpecHalogenM :: ManageSpec m => ManageSpec ( HalogenM state action slots output m ) where
     getSpec = lift <<< getSpec
+    getSpecs = lift getSpecs
     saveSpec = lift <<< saveSpec

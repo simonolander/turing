@@ -16,7 +16,7 @@ import Turing.AppM (runAppM)
 import Routing.Duplex (parse)
 import Routing.Hash (matchesWith)
 import Turing.Firebase.Auth (onAuthStateChanged)
-import Effect.Console (errorShow, logShow)
+import Effect.Console (errorShow)
 import Data.Either (Either(..))
 import Network.RemoteData (RemoteData(..))
 import Effect.Ref as Ref
