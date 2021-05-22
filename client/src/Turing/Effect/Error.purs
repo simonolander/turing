@@ -1,16 +1,23 @@
 module Turing.Effect.Error where
 
 import Prelude
+
+import Data.Either (Either)
+import Data.Maybe (Maybe(..))
 import Effect (Effect)
-import Effect.Exception (Error)
-import Effect.Exception as Ex
-import Effect.Console as C
-import Data.Maybe (fromMaybe)
+import Effect.Class.Console (error) as C
+import Effect.Exception (Error, name, message)
+import Data.Either
 
 logError :: Error -> Effect Unit
-logError error = do
-    C.error $ Ex.name error
-        <> ": "
-        <> Ex.message error
---        <> "\n"
---        <> fromMaybe "<no stacktrace>" (Ex.stack error)
+logError error = C.error $ showError error
+
+showError :: Error -> String
+showError error = name error <> ": " <> message error
+
+hushError :: forall a b. Show a => Either a b -> Effect (Maybe b)
+hushError (Left e) = do
+    C.error $ show e
+    pure Nothing
+hushError (Right v) = pure $ Just v
+

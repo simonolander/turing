@@ -21,6 +21,9 @@ import Turing.Data.Route as Route
 import Turing.Firebase.CollectionReference as CollectionReference
 import Turing.Firebase.DocumentReference as DocumentReference
 import Turing.Firebase.DocumentSnapshot as DocumentSnapshot
+import Turing.Firebase.QuerySnapshot as QuerySnapshot
+import Turing.Firebase.QueryDocumentSnapshot (QueryDocumentSnapshot)
+import Turing.Firebase.QueryDocumentSnapshot as QueryDocumentSnapshot
 import Turing.Firebase.Firestore as Firestore
 import Type.Equality (class TypeEquals, from)
 import Control.Monad.Except (runExcept)
@@ -29,8 +32,14 @@ import Data.Argonaut.Decode (decodeJson)
 import Data.Argonaut.Encode (encodeJson)
 import Effect.Exception as Ex
 import Data.Bifunctor (lmap, rmap)
+import Turing.Effect.Error (showError)
+import Data.Traversable (for)
 
 import Debug (traceM)
+import Data.Argonaut.Core (Json)
+import Turing.Data.Spec (Spec)
+import Data.Traversable
+import Unsafe.Coerce (unsafeCoerce)
 
 newtype AppM a = AppM (ReaderT Env Aff a)
 
@@ -82,6 +91,7 @@ instance manageSpecAppM :: ManageSpec AppM where
                             # lmap show
                             # lmap Ex.error
 
+    getSpecs = H.liftAff $ lmap showError <$> try Firestore.getSpecs
 
     saveSpec spec = do
         setPromise <- liftEffect do

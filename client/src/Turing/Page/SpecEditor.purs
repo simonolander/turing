@@ -9,9 +9,8 @@ import Turing.Data.Spec (Spec, SpecId)
 import Turing.Capability.ManageSpec (getSpec, saveSpec)
 import Data.Const (Const)
 import Formless as F
-import Effect.Console (infoShow)
 import Data.Maybe (Maybe(..))
-import Network.RemoteData (RemoteData(..), fromEither)
+import Network.RemoteData (RemoteData(..))
 import Data.Either (Either(..))
 import Effect.Exception (Error)
 import Turing.Effect.Error (logError)
@@ -49,7 +48,7 @@ component = H.mkComponent { initialState, render, eval }
             , case state.spec of
                 NotAsked -> HH.text "Not asked"
                 Loading -> HH.text "Loading spec"
-                Failure error ->
+                Failure _error ->
                     HH.div_
                         [ HH.h2_ [ HH.text "Error loading spec" ]
                         , HH.p_
@@ -87,4 +86,4 @@ component = H.mkComponent { initialState, render, eval }
                 Left error -> do
                     H.liftEffect $ logError error
                     H.modify_ _ { savingSpec = Failure error }
-                Right error -> H.modify_ _ { savingSpec = Success unit }
+                Right _error -> H.modify_ _ { savingSpec = Success unit }
