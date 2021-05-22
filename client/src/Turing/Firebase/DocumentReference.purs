@@ -16,7 +16,10 @@ foreign import data DocumentReference :: Type -> Type
 foreign import get :: forall t. DocumentReference t -> Maybe GetOptions -> Effect (Promise (DocumentSnapshot t))
 
 --| See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference#set
-foreign import set :: forall t. DocumentReference t -> t -> Effect (Promise Unit)
+foreign import setImpl :: forall t. DocumentReference t -> t -> Effect (Promise Unit)
+
+set :: forall t. DocumentReference t -> t -> Aff Unit
+set ref value = toAffE $ setImpl ref value
 
 get_ :: forall t. DocumentReference t -> Aff (DocumentSnapshot t)
 get_ ref = toAffE $ get ref Nothing

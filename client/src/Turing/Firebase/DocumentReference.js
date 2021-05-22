@@ -10,7 +10,7 @@ exports.get = function (documentReference) {
 };
 
 // See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference#set
-exports.set = function (documentReference) {
+exports.setImpl = function (documentReference) {
     return function (data) {
         return function () {
             return documentReference.set(data, {});
