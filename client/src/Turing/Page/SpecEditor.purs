@@ -1,29 +1,28 @@
 module Turing.Page.SpecEditor where
 
 import Prelude
+
+import Data.Const (Const)
+import Data.Maybe (Maybe(..))
+import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
+import Network.RemoteData (RemoteData(..), fromEither)
 import Turing.AppM (AppM)
+import Turing.Capability.ManageSpec (getSpec, saveSpec)
 import Turing.Component.Form.Spec as SF
 import Turing.Data.Spec (Spec, SpecId)
-import Turing.Capability.ManageSpec (getSpec, saveSpec)
-import Data.Const (Const)
-import Formless as F
-import Data.Maybe (Maybe(..))
-import Network.RemoteData (RemoteData(..))
-import Data.Either (Either(..))
-import Effect.Exception (Error)
-import Turing.Effect.Error (logError)
 
 type State =
     { specId :: String
-    , spec :: RemoteData Error (Maybe Spec)
-    , savingSpec :: RemoteData Error Unit
+    , spec :: RemoteData String (Maybe Spec)
+    , savingSpec :: RemoteData String Unit
     }
 
 data Action
     = Initialize
     | HandleSpecForm Spec
+    | ClickedTestRun
 
 type Slots =
     ( formless :: SF.Slot Unit )
@@ -48,11 +47,13 @@ component = H.mkComponent { initialState, render, eval }
             , case state.spec of
                 NotAsked -> HH.text "Not asked"
                 Loading -> HH.text "Loading spec"
-                Failure _error ->
+                Failure error ->
                     HH.div_
                         [ HH.h2_ [ HH.text "Error loading spec" ]
                         , HH.p_
-                            [ HH.text "Something went wrong when loading the spec. Check the logs for details." ]
+                            [ HH.text "Something went wrong when loading the spec." ]
+                        , HH.p_
+                            [ HH.text error ]
                         ]
                 Success (Nothing) ->
                     HH.div_
@@ -61,6 +62,12 @@ component = H.mkComponent { initialState, render, eval }
                         ]
                 Success (Just spec) ->
                     HH.slot F._formless unit SF.component spec HandleSpecForm
+            , case state.savingSpec of
+                NotAsked -> HH.text ""
+                Loading -> HH.p_ [ HH.text "Saving spec" ]
+                Failure error -> HH.p_ [ HH.text error ]
+                Success _ -> HH.p_ [ HH.text "Spec saved 👌" ]
+            , HH.button_ [ HH.text "Test run" ]
             ]
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
@@ -74,16 +81,9 @@ component = H.mkComponent { initialState, render, eval }
             specId <- H.gets _.specId
             H.modify_ _ { spec = Loading }
             result <- getSpec specId
-            case result of
-                Left error -> do
-                    H.liftEffect $ logError error
-                    H.modify_ _ { spec = Failure error }
-                Right spec -> H.modify_ _ { spec = Success spec }
+            H.modify_ _ { spec = fromEither result}
         handleAction (HandleSpecForm spec) = do
             H.modify_ _ { savingSpec = Loading }
             result <- saveSpec spec
-            case result of
-                Left error -> do
-                    H.liftEffect $ logError error
-                    H.modify_ _ { savingSpec = Failure error }
-                Right _error -> H.modify_ _ { savingSpec = Success unit }
+            H.modify_ _ { savingSpec = fromEither result }
+        handleAction ClickedTestRun = pure unit

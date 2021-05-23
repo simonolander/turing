@@ -1,26 +1,28 @@
 module Turing.Component.Form.Spec where
 
 import Prelude
+
 import Data.Const (Const)
 import Data.Either (Either(..))
+import Data.Int as Int
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Effect.Class (class MonadEffect)
+import Data.String as String
 import Effect.Aff.Class (class MonadAff)
+import Effect.Class (class MonadEffect)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Turing.Data.Spec (Spec, SpecGoal(..))
 import Type.Proxy (Proxy(..))
-import Turing.Data.Spec (Spec)
-import Data.Int as Int
-import Data.String as String
 
 newtype SpecForm (r :: Row Type -> Type) f = SpecForm (r
     ( id :: f Void String String
     , name :: f NameError String String
     , maxNumberOfCards :: f MaxNumberOfCardsError String Int
+    , goal :: f Void String SpecGoal
     ))
 derive instance newtypeSpecForm :: Newtype (SpecForm r f) _
 
@@ -61,11 +63,13 @@ component =
                     Just n
                         | n < 1 -> Left TooLow
                         | otherwise -> Right n
+            , goal: F.hoistFn_ $ const BusyBeaver
             }
         , initialInputs: Just $ F.wrapInputFields
             { id: spec.id
             , name: spec.name
             , maxNumberOfCards: show spec.maxNumberOfCards
+            , goal: ""
             }
         }
 

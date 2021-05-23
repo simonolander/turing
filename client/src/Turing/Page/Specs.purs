@@ -21,7 +21,7 @@ import Turing.Data.Spec (Spec, mkSpec)
 import Turing.Effect.Error (logError)
 
 type State =
-    { newSpecCreation :: RemoteData Error Void
+    { newSpecCreation :: RemoteData String Void
     , specs :: RemoteData String (Array Spec)
     }
 
@@ -95,7 +95,5 @@ component = H.mkComponent { initialState, render, eval }
             spec <- H.liftEffect mkSpec
             result <- saveSpec spec
             case result of
-                Left error -> do
-                    H.liftEffect $ logError error
-                    H.modify_ _ { newSpecCreation = Failure error }
+                Left error -> H.modify_ _ { newSpecCreation = Failure error }
                 Right _ -> navigate $ SpecEditor spec.id

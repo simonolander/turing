@@ -1,4 +1,4 @@
-module Turing.Effect.Random (randomString) where
+module Turing.Effect.Random (randomString, randomId) where
 
 import Prelude
 import Effect (Effect)
@@ -20,3 +20,6 @@ randomString :: Int -> Effect String
 randomString length = do
     codePoints <- replicateA length randomCodePoint
     pure $ fromCodePointArray codePoints
+
+randomId :: Effect String
+randomId = randomString 7
