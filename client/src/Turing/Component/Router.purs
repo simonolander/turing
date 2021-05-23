@@ -12,11 +12,12 @@ import Routing.Hash (getHash)
 import Turing.AppM (AppM)
 import Turing.Capability.Navigate (navigate)
 import Turing.Data.Route (Route(..), route)
+import Turing.Page.Campaign as Campaign
 import Turing.Page.Home as Home
 import Turing.Page.Play as Play
 import Turing.Page.Settings as Settings
+import Turing.Page.Spec as Spec
 import Turing.Page.SpecEditor as SpecEditor
-import Turing.Page.Campaign as Campaign
 import Turing.Page.Specs as Specs
 import Type.Proxy (Proxy(..))
 
@@ -33,6 +34,7 @@ type Slots =
     ( home :: H.Slot (Const Void) Void Unit
     , specs :: H.Slot (Const Void) Void Unit
     , specEditor :: H.Slot (Const Void) Void Unit
+    , spec :: H.Slot (Const Void) Void Unit
     , settings :: H.Slot (Const Void) Void Unit
     , play :: H.Slot (Const Void) Void Unit
     , campaign :: H.Slot (Const Void) Void Unit
@@ -56,6 +58,7 @@ component = H.mkComponent { initialState, render, eval }
             Just Play -> HH.slot (Proxy :: _ "play") unit Play.component unit absurd
             Just Settings -> HH.slot (Proxy :: _ "settings") unit Settings.component unit absurd
             Just (SpecEditor specId) -> HH.slot (Proxy :: _ "specEditor") unit SpecEditor.component specId absurd
+            Just (Spec specId) -> HH.slot (Proxy :: _ "spec") unit Spec.component specId absurd
             Just (Campaign campaignId) -> HH.slot (Proxy :: _ "campaign") unit Campaign.component campaignId absurd
             Nothing -> HH.text "404 Not found"
 

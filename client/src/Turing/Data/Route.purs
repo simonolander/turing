@@ -17,6 +17,7 @@ data Route
     | Campaign CampaignId
     | Settings
     | SpecEditor SpecId
+    | Spec SpecId
 
 derive instance genericRoute :: Generic Route _
 derive instance eqRoute :: Eq Route
@@ -30,5 +31,6 @@ route = root $ sum
     , "Play": "play" / noArgs
     , "Campaign": "campaign" / segment
     , "SpecEditor": "specs" / segment
+    , "Spec": "spec" / segment
     , "Settings": "settings" / noArgs
     }
