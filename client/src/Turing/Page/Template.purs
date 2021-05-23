@@ -4,31 +4,17 @@ import Prelude
 import Halogen as H
 import Halogen.HTML as HH
 --import Halogen.HTML.Events as HE
-import Turing.AppM (AppM)
-import Data.Const (Const)
 
 type State = Unit
 
-type Action = Unit
-
-type Slots :: forall k. Row k
-type Slots = ()
-
-type Query :: forall k. k -> Type
-type Query = Const Unit
-
-type Input = Unit
-
-type Output = Void
-
-component :: H.Component Query Input Output AppM
+component :: forall query input output m. H.Component query input output m
 component = H.mkComponent { initialState, render, eval }
     where
-    initialState :: Input -> State
+    initialState :: input -> State
     initialState = const unit
 
-    render :: State -> HH.HTML (H.ComponentSlot Slots AppM Action) Action
+    render :: forall slots action. State -> HH.HTML (H.ComponentSlot slots m action) action
     render = const $ HH.h1_ [ HH.text "Template" ]
 
-    eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM
+    eval :: forall slots action. H.HalogenQ query action input ~> H.HalogenM State action slots output m
     eval = H.mkEval H.defaultEval
