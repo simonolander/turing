@@ -30,6 +30,11 @@ component = H.mkComponent { initialState, render, eval }
                 [ HH.h1_ [ HH.text "Turing" ] ]
             , HH.p_
                 [ HH.a
+                    [ safeHref Play ]
+                    [ HH.text "Play" ]
+                ]
+            , HH.p_
+                [ HH.a
                     [ safeHref Specs ]
                     [ HH.text "Specs" ]
                 ]
