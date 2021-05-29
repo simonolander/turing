@@ -1,13 +1,11 @@
 module Turing.Page.Specs where
 
 import Prelude
-import Turing.Component.Html.Utility
 
 import Data.Array (singleton)
 import Data.Const (Const)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Effect.Exception (Error)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -16,9 +14,9 @@ import Network.RemoteData (RemoteData(..), fromEither, isLoading)
 import Turing.AppM (AppM)
 import Turing.Capability.ManageSpec (getSpecs, saveSpec)
 import Turing.Capability.Navigate (navigate)
+import Turing.Component.Html.Utility (safeHref, whenFailure)
 import Turing.Data.Route (Route(..))
 import Turing.Data.Spec (Spec, mkSpec)
-import Turing.Effect.Error (logError)
 
 type State =
     { newSpecCreation :: RemoteData String Void
