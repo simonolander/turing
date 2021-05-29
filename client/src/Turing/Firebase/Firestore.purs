@@ -1,7 +1,6 @@
 module Turing.Firebase.Firestore where
 
 import Prelude
-
 import Data.Argonaut.Core (Json)
 import Data.Argonaut.Decode (decodeJson)
 import Data.Array (catMaybes)
@@ -25,19 +24,21 @@ foreign import firestore :: Effect Firestore
 
 --| See https://firebase.google.com/docs/reference/js/firebase.firestore.Firestore#collection
 foreign import collection :: Firestore -> CollectionPath -> Effect (CollectionReference Json)
-type CollectionPath = String
+
+type CollectionPath
+  = String
 
 specsCollection :: Effect (CollectionReference Json)
 specsCollection = do
-    fs <- firestore
-    collection fs "specs"
+  fs <- firestore
+  collection fs "specs"
 
 --| Fetches all the specs from the database. Any error when decoding the specs result in an
 --| error log, and the spec is subsequently ignored.
 getSpecs :: Aff (Array Spec)
 getSpecs = do
-    querySnapshot <- liftEffect specsCollection >>= getAff_
-    liftEffect do
-        queryData <- sequence $ _data_ <$> docs querySnapshot
-        maybeSpecs <- sequence $ hushError <$> decodeJson <$> queryData
-        pure $ catMaybes maybeSpecs
+  querySnapshot <- liftEffect specsCollection >>= getAff_
+  liftEffect do
+    queryData <- sequence $ _data_ <$> docs querySnapshot
+    maybeSpecs <- sequence $ hushError <$> decodeJson <$> queryData
+    pure $ catMaybes maybeSpecs

@@ -1,7 +1,6 @@
 module Turing.Effect.Error where
 
 import Prelude
-
 import Data.Either (Either)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
@@ -17,7 +16,7 @@ showError error = name error <> ": " <> message error
 
 hushError :: forall a b. Show a => Either a b -> Effect (Maybe b)
 hushError (Left e) = do
-    C.error $ show e
-    pure Nothing
-hushError (Right v) = pure $ Just v
+  C.error $ show e
+  pure Nothing
 
+hushError (Right v) = pure $ Just v

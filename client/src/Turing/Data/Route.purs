@@ -1,7 +1,6 @@
 module Turing.Data.Route where
 
 import Prelude hiding ((/))
-
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 import Routing.Duplex (RouteDuplex', root, segment)
@@ -12,28 +11,32 @@ import Turing.Data.Spec (SpecId)
 import Turing.Data.Program (ProgramId)
 
 data Route
-    = Home
-    | Specs
-    | Play
-    | Campaign CampaignId
-    | Settings
-    | SpecEditor SpecId
-    | Spec SpecId
-    | Program ProgramId
+  = Home
+  | Specs
+  | Play
+  | Campaign CampaignId
+  | Settings
+  | SpecEditor SpecId
+  | Spec SpecId
+  | Program ProgramId
 
 derive instance genericRoute :: Generic Route _
+
 derive instance eqRoute :: Eq Route
+
 instance showRoute :: Show Route where
-    show = genericShow
+  show = genericShow
 
 route :: RouteDuplex' Route
-route = root $ sum
-    { "Home": noArgs
-    , "Specs": "specs" / noArgs
-    , "Play": "play" / noArgs
-    , "Campaign": "campaign" / segment
-    , "SpecEditor": "specs" / segment
-    , "Spec": "spec" / segment
-    , "Program": "program" / segment
-    , "Settings": "settings" / noArgs
-    }
+route =
+  root
+    $ sum
+        { "Home": noArgs
+        , "Specs": "specs" / noArgs
+        , "Play": "play" / noArgs
+        , "Campaign": "campaign" / segment
+        , "SpecEditor": "specs" / segment
+        , "Spec": "spec" / segment
+        , "Program": "program" / segment
+        , "Settings": "settings" / noArgs
+        }

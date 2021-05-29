@@ -1,7 +1,6 @@
 module Turing.Data.Spec where
 
 import Prelude
-
 import Data.Argonaut.Decode (class DecodeJson)
 import Data.Argonaut.Decode.Generic (genericDecodeJson)
 import Data.Argonaut.Encode (class EncodeJson)
@@ -11,31 +10,32 @@ import Data.Map (Map)
 import Effect (Effect)
 import Turing.Effect.Random (randomString)
 
-type SpecId = String
+type SpecId
+  = String
 
-type Spec =
-    { id :: SpecId
+type Spec
+  = { id :: SpecId
     , name :: String
     , maxNumberOfCards :: Int
     , goal :: SpecGoal
---    , initialTape :: Map Int Boolean
---    , goal :: SpecGoal
---    , isTapeModifiable :: Boolean
+    --    , initialTape :: Map Int Boolean
+    --    , goal :: SpecGoal
+    --    , isTapeModifiable :: Boolean
     }
 
 --| Returns a new spec with a random id
 mkSpec :: Effect Spec
 mkSpec = do
-    id <- randomString 7
-    pure
-        { id
-        , name: "New spec"
-        , maxNumberOfCards: 5
-        , goal: BusyBeaver
-        }
+  id <- randomString 7
+  pure
+    { id
+    , name: "New spec"
+    , maxNumberOfCards: 5
+    , goal: BusyBeaver
+    }
 
 data SpecGoal
-    = BusyBeaver
+  = BusyBeaver
 
 derive instance genericSpecGoal :: Generic SpecGoal _
 

@@ -12,7 +12,8 @@
     "postinstall": "npm run build",
     "watch": "spago build --watch --clear-screen",
     "clean": "rm -rf .spago node_modules output",
-    "lint": "purty . --write"
+    "lint": "purty src --write",
+    "lint-watch": "fswatch src | xargs -I{} purty --write {}"
   },
   "dependencies": {
     "decimal.js": "^10.2.0",

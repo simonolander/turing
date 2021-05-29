@@ -1,7 +1,6 @@
 module Turing.Firebase.DocumentSnapshot where
 
 import Prelude
-
 import Control.Promise (Promise)
 import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toMaybe)

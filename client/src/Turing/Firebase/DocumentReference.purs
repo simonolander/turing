@@ -1,7 +1,6 @@
 module Turing.Firebase.DocumentReference where
 
 import Prelude
-
 import Control.Promise (Promise, toAffE)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)

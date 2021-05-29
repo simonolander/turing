@@ -7,12 +7,11 @@ import Turing.Data.User (User)
 import Foreign (MultipleErrors)
 import Effect.Ref (Ref)
 
-type Env =
-    { logLevel :: LogLevel
+type Env
+  = { logLevel :: LogLevel
     , userRef :: Ref (RemoteData MultipleErrors (Maybe User))
     }
 
 data LogLevel
-    = Dev
-    | Prod
-
+  = Dev
+  | Prod
