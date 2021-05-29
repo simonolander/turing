@@ -28,6 +28,7 @@ You can edit this file as you like.
   , "remotedata"
   , "routing"
   , "routing-duplex"
+  , "sequences"
   , "slug"
   , "test-unit"
   , "variant"
