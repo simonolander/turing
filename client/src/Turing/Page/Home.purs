@@ -7,6 +7,10 @@ import Halogen.HTML.Properties as HP
 import Turing.Data.Route (Route(..))
 import Turing.Component.Html.Utility (safeHref)
 import Data.Newtype (wrap)
+import Turing.Component.Html.Utility (navbar)
+import Turing.Component.Html.Utility (section_)
+import Turing.Component.Html.Utility (container_)
+import Turing.Component.Html.Utility (title_)
 
 type State = Unit
 
@@ -27,32 +31,40 @@ component = H.mkComponent { initialState, render, eval }
 
     render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
     render _state =
-        HH.div
-            [ HP.class_ $ wrap "container" ]
-            [ HH.section
-                [ HP.class_ $ wrap "header" ]
-                [ HH.h1
-                    [ HP.class_ $ wrap "title" ]
-                    [ HH.text "Turing" ]
-                ]
-            , HH.div
-                [ HP.class_ $ wrap "row" ]
-                [ HH.a
-                    [ safeHref Play
-                    , HP.classes $ wrap <$> [ "button", "button-primary", "row" ]
+        HH.div_
+            [ navbar
+            , HH.section
+                [ HP.class_ $ wrap "hero is-medium" ]
+                [ HH.div
+                    [ HP.class_ $ wrap "hero-body" ]
+                    [ HH.h1
+                        [ HP.classes $ wrap <$> [ "title", "is-1", "has-text-centered" ] ]
+                        [ HH.text "Turing" ]
+                    , HH.h2
+                        [ HP.classes $ wrap <$> [ "subtitle", "is-4", "has-text-centered" ] ]
+                        [ HH.text "Fun with finite-state machines" ]
                     ]
-                    [ HH.text "Play" ]
                 ]
-            , HH.a
-                [ safeHref Specs
-                , HP.class_ $ wrap "button"
+            , container_
+                [ HH.div
+                    [ HP.classes $ wrap <$> [ "buttons", "are-large" ] ]
+                    [ HH.a
+                        [ safeHref Play
+                        , HP.classes $ wrap <$> [ "button", "is-primary", "is-fullwidth" ]
+                        ]
+                        [ HH.text "Play" ]
+                    , HH.a
+                        [ safeHref Specs
+                        , HP.classes $ wrap <$> [ "button", "is-fullwidth" ]
+                        ]
+                        [ HH.text "Specs" ]
+                    , HH.a
+                        [ safeHref Settings
+                        , HP.classes $ wrap <$> [ "button", "is-fullwidth" ]
+                        ]
+                        [ HH.text "Settings" ]
+                    ]
                 ]
-                [ HH.text "Specs" ]
-            , HH.a
-                [ safeHref Settings
-                , HP.class_ $ wrap "button"
-                ]
-                [ HH.text "Settings" ]
             ]
 
     eval :: H.HalogenQ query Action Input ~> H.HalogenM State Action Slots Output m

@@ -2,11 +2,14 @@ module Turing.Page.Play where
 
 import Prelude
 
+import Data.Newtype (wrap)
 import Halogen as H
 import Halogen.HTML as HH
-import Turing.Component.Html.Utility (safeHref)
+import Halogen.HTML.Properties as HP
+import Turing.Component.Html.Utility (container_, navbar, safeHref, section_, title_)
 import Turing.Data.Campaign (Campaign, campaigns)
 import Turing.Data.Route (Route(..))
+import Turing.Component.Html.Utility (title2_)
 
 type State = Unit
 
@@ -21,20 +24,22 @@ component = H.mkComponent { initialState, render, eval }
     render :: forall slots. State -> HH.HTML (H.ComponentSlot slots m Action) Action
     render _ =
         HH.div_
-            [ HH.h1_ [ HH.text "Play" ]
-            , HH.h2_ [ HH.text "Campaigns" ]
-            , HH.div_ $ renderCampaign <$> campaigns
+            [ navbar
+            , section_
+                [ title_ "Campaigns"
+                , HH.div
+                    [ HP.class_ $ wrap "buttons" ]
+                    $ renderCampaign <$> campaigns
+                ]
             ]
 
     renderCampaign :: forall slots. Campaign -> HH.HTML (H.ComponentSlot slots m Action) Action
     renderCampaign campaign =
-        HH.div_
-            [ HH.h3_
-                [ HH.a
-                    [ safeHref $ Campaign campaign.id ]
-                    [ HH.text campaign.name ]
-                ]
+        HH.a
+            [ safeHref $ Campaign campaign.id
+            , HP.classes $ wrap <$> [ "button", "is-info" ]
             ]
+            [ HH.text campaign.name ]
 
     eval :: forall slots. H.HalogenQ query Action input ~> H.HalogenM State Action slots output m
     eval = H.mkEval H.defaultEval

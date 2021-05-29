@@ -37,9 +37,39 @@ campaigns =
             , maxNumberOfCards: 4
             , goal: BusyBeaver
             }
-          , { id: "TOrmdjW"
+          , { id: "YWbLhkC"
             , name: "BB5"
             , maxNumberOfCards: 5
+            , goal: BusyBeaver
+            }
+          , { id: "cR11nFB"
+            , name: "BB6"
+            , maxNumberOfCards: 6
+            , goal: BusyBeaver
+            }
+          , { id: "SZKns9S"
+            , name: "BB7"
+            , maxNumberOfCards: 7
+            , goal: BusyBeaver
+            }
+          , { id: "2YWLM6b"
+            , name: "BB8"
+            , maxNumberOfCards: 8
+            , goal: BusyBeaver
+            }
+          , { id: "M1GREyY"
+            , name: "BB9"
+            , maxNumberOfCards: 9
+            , goal: BusyBeaver
+            }
+          , { id: "65g53e3"
+            , name: "BB10"
+            , maxNumberOfCards: 10
+            , goal: BusyBeaver
+            }
+          , { id: "XQnXYnS"
+            , name: "BB11"
+            , maxNumberOfCards: 11
             , goal: BusyBeaver
             }
           ]

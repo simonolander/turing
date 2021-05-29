@@ -6,11 +6,17 @@ import Data.Array (find)
 import Data.Maybe (Maybe(..))
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
 import Network.RemoteData (RemoteData(..))
 import Turing.Component.Html.Utility (safeHref)
 import Turing.Data.Campaign (Campaign, CampaignId, campaigns)
 import Turing.Data.Route (Route(..))
 import Turing.Data.Spec (Spec)
+import Turing.Component.Html.Utility (navbar)
+import Turing.Component.Html.Utility (remoteData)
+import Turing.Component.Html.Utility (section_)
+import Turing.Component.Html.Utility (title_)
+import Data.Newtype (wrap)
 
 type State =
     { campaignId :: CampaignId
@@ -34,35 +40,40 @@ component = H.mkComponent { initialState, render, eval }
 
     render :: forall slots. State -> HH.HTML (H.ComponentSlot slots m Action) Action
     render state =
-        case state.campaign of
-            NotAsked -> HH.text "Not asked"
-            Loading ->
-                HH.div_
-                    [ HH.h1_ [ HH.text "Campaign" ]
-                    , HH.p_ [ HH.text "Loadign campaign" ]
-                    ]
-            Failure error ->
-                HH.div_
-                    [ HH.h1_ [ HH.text "Campaign" ]
-                    , HH.p_ [ HH.text error ]
-                    ]
-            Success Nothing ->
-                HH.div_
-                    [ HH.h1_ [ HH.text "Campaign - 404" ]
-                    , HH.p_ [ HH.text $ "Campaign " <> state.campaignId <> " not found" ]
-                    ]
-            Success (Just campaign) ->
-                HH.div_
-                    [ HH.h1_ [ HH.text campaign.name ]
-                    , HH.div_ $ renderSpec <$> campaign.specs
-                    ]
+        HH.div_
+            [ navbar
+            , remoteData state.campaign "campaign" state.campaignId renderCampaign
+            ]
             where
+            renderCampaign campaign =
+                section_
+                    [ title_ campaign.name
+                    , HH.div
+                        [ HP.classes $ wrap <$> [ "columns", "is-multiline" ] ]
+                        $ renderSpec <$> campaign.specs
+                    ]
+
             renderSpec :: forall slots. Spec -> HH.HTML (H.ComponentSlot slots m Action) Action
             renderSpec spec =
-                HH.h2_
-                    [ HH.a
-                        [ safeHref $ Spec spec.id ]
-                        [ HH.text spec.name ]
+                HH.div
+                    [ HP.classes $ wrap <$> [ "column", "is-narrow" ] ]
+                    [ HH.div
+                        [ HP.class_ $ wrap "card" ]
+                        [ HH.div
+                            [ HP.class_ $ wrap "card-content" ]
+                            [ HH.h1
+                                [ HP.classes $ wrap <$> [ "title", "is-4" ] ]
+                                [ HH.text spec.name ]
+                            ]
+                        , HH.footer
+                            [ HP.class_ $ wrap "card-footer" ]
+                            [ HH.a
+                                [ HP.class_ $ wrap "card-footer-item"
+                                , safeHref $ Spec spec.id
+                                ]
+                                [ HH.text "Play" ]
+                            ]
+                        ]
                     ]
 
     eval :: forall slots. H.HalogenQ query Action Input ~> H.HalogenM State Action slots output m
