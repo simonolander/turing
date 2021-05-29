@@ -19,6 +19,12 @@ import Halogen.HTML.Properties as HP
 import Turing.Data.Card (Card, CardId)
 import Turing.Data.Spec (Spec)
 import Type.Proxy (Proxy(..))
+import Turing.Component.Html.Utility (classes)
+import Data.Maybe (isJust)
+import Data.Array ((:))
+import Effect.Class.Console (logShow)
+import Data.Tuple (Tuple)
+import Data.Maybe (fromMaybe)
 
 newtype CardForm (r :: Row Type -> Type) f
   = CardForm
@@ -43,16 +49,24 @@ data NameError
   = EmptyName
 
 type Input
-  = Card
+  = { card :: Card
+    , cardNames :: Array (Tuple Int String)
+    }
+
+type State
+  = ( cardNames :: Array (Tuple Int String) )
 
 type Slot
   = H.Slot (F.Query CardForm (Const Void) ()) Message
 
 data Action
   = ClickedRemove
+  | ChangedName String
+  | Receive Input
 
 data Message
   = Remove
+  | Name String
 
 component ::
   forall query m.
@@ -64,13 +78,18 @@ component =
     $ F.defaultSpec
         { render = render
         , handleAction = handleAction
+        , handleEvent = handleEvent
+        , receive = Just <<< Receive
         }
   where
-  mkInput :: Input -> _
-  mkInput card =
+  mkInput :: Input -> F.Input CardForm State m
+  mkInput input =
     { validators:
         CardForm
-          { id: F.hoistFn_ $ const card.id
+          { id:
+              F.hoistFnE_ \str -> case String.trim str of
+                "" -> Left EmptyName
+                trimmedName -> Right trimmedName
           , falseWriteSymbol: F.hoistFn_ $ const false
           , falseTapeMotion: F.hoistFn_ $ const false
           , falseNextCardId: F.hoistFn_ $ const Nothing
@@ -81,67 +100,179 @@ component =
     , initialInputs:
         Just
           $ F.wrapInputFields
-              { id: card.id
-              , falseWriteSymbol: show $ _.writeSymbol $ fst card.instructions
-              , falseTapeMotion: show $ _.tapeMotion $ fst card.instructions
-              , falseNextCardId: show $ _.nextCardId $ fst card.instructions
-              , trueWriteSymbol: show $ _.writeSymbol $ snd card.instructions
-              , trueTapeMotion: show $ _.tapeMotion $ snd card.instructions
-              , trueNextCardId: show $ _.nextCardId $ snd card.instructions
+              { id: input.card.id
+              , falseWriteSymbol: input.card.instructions # fst # _.writeSymbol # show
+              , falseTapeMotion: input.card.instructions # fst # _.tapeMotion # show
+              , falseNextCardId: input.card.instructions # fst # _.nextCardId # fromMaybe ""
+              , trueWriteSymbol: input.card.instructions # snd # _.writeSymbol # show
+              , trueTapeMotion: input.card.instructions # snd # _.tapeMotion # show
+              , trueNextCardId: input.card.instructions # snd # _.nextCardId # fromMaybe ""
               }
+    , cardNames: input.cardNames
     }
 
-  render { form } =
-    HH.div_
-      [ HH.p_
-          [ HH.label_
-              [ HH.text "Name"
-              , HH.input
-                  [ HP.value $ F.getInput _name form
-                  , HE.onValueInput $ F.setValidate _name
-                  ]
-              , HH.text case F.getError _name form of
-                  Just EmptyName -> "Name cannot be empty"
-                  Nothing -> ""
-              ]
-          ]
-      , HH.section_
-          [ HH.h2_ [ HH.text "Cards" ]
-          , HH.button
-              []
-              [ HH.text "Add card" ]
-          , HH.section_
-              [ HH.h3_ [ HH.text "Card f99asc0" ]
-              , HH.label_
-                  [ HH.text "Id"
-                  , HH.input
-                      []
-                  ]
-              , HH.section_
-                  [ HH.h3_ [ HH.text "When on" ]
-                  , HH.label_
-                      [ HH.text "Write"
-                      , HH.input
-                          [ HP.type_ HP.InputCheckbox ]
-                      ]
-                  , HH.label_
-                      [ HH.text "Move"
-                      , HH.input
-                          [ HP.type_ HP.InputCheckbox ]
-                      ]
-                  , HH.label_
-                      [ HH.text "Next card"
-                      , HH.input
-                          []
-                      ]
-                  ]
-              ]
-          ]
-      , HH.button
-          [ HE.onClick $ const F.submit ]
-          [ HH.text "Save program" ]
-      ]
+  render state =
+    let
+      name = F.getInput _name state.form
+
+      nameError = F.getError _name state.form
+    in
+      HH.div
+        [ classes "column is-narrow" ]
+        [ HH.div
+            [ classes "card" ]
+            [ HH.div
+                [ classes "card-header" ]
+                [ HH.p
+                    [ classes "card-header-title" ]
+                    [ HH.text $ "Card " <> name ]
+                , HH.div
+                    [ classes "card-header-icon"
+                    ]
+                    [ HH.button
+                        [ HE.onClick $ const $ F.injAction ClickedRemove
+                        , classes "delete"
+                        ]
+                        []
+                    ]
+                ]
+            , HH.div
+                [ classes "card-content" ]
+                [ HH.div
+                    [ classes "field block" ]
+                    [ HH.label
+                        [ classes "label" ]
+                        [ HH.text "Name" ]
+                    , HH.div
+                        [ classes "control" ]
+                        [ HH.input
+                            [ classes $ if isJust nameError then "input is-danger" else "input"
+                            , HP.type_ HP.InputText
+                            , HP.placeholder "My card"
+                            , HP.value name
+                            , HE.onValueInput $ F.injAction <<< ChangedName
+                            ]
+                        ]
+                    , case nameError of
+                        Just EmptyName ->
+                          HH.p
+                            [ classes "help is-danger" ]
+                            [ HH.text "Cannot be empty" ]
+                        Nothing -> HH.text ""
+                    ]
+                , HH.div
+                    [ classes "columns" ]
+                    [ HH.div
+                        [ classes "column" ]
+                        [ HH.h1
+                            [ classes "title is-5" ]
+                            [ HH.text "When on" ]
+                        , HH.div
+                            [ classes "field" ]
+                            [ HH.label
+                                [ classes "checkbox" ]
+                                [ HH.input
+                                    [ HP.type_ HP.InputCheckbox
+                                    , HP.value $ F.getInput _trueWriteSymbol state.form
+                                    , HE.onValueInput $ F.setValidate _trueWriteSymbol
+                                    ]
+                                , HH.text " Write"
+                                ]
+                            ]
+                        , HH.div
+                            [ classes "field" ]
+                            [ HH.label
+                                [ classes "checkbox" ]
+                                [ HH.input
+                                    [ HP.type_ HP.InputCheckbox
+                                    , HP.value $ F.getInput _trueWriteSymbol state.form
+                                    , HE.onValueInput $ F.setValidate _trueTapeMotion
+                                    ]
+                                , HH.text " Move left"
+                                ]
+                            ]
+                        , HH.div
+                            [ classes "field" ]
+                            [ HH.label
+                                [ classes "label" ]
+                                [ HH.text "Next card" ]
+                            , HH.div
+                                [ classes "select" ]
+                                [ HH.select
+                                    [ HE.onValueChange $ F.setValidate _trueNextCardId ]
+                                    $ (HH.option [ HP.value "", classes "is-italic" ] [ HH.text "<Terminate>" ])
+                                    : map (\c -> HH.option_ [ HH.text c ]) (state.cardNames <#> snd)
+                                ]
+                            ]
+                        ]
+                    , HH.div
+                        [ classes "column" ]
+                        [ HH.h1
+                            [ classes "title is-5" ]
+                            [ HH.text "When off" ]
+                        , HH.div
+                            [ classes "field" ]
+                            [ HH.label
+                                [ classes "checkbox" ]
+                                [ HH.input
+                                    [ HP.type_ HP.InputCheckbox
+                                    , HP.value $ F.getInput _falseWriteSymbol state.form
+                                    , HE.onValueInput $ F.setValidate _falseWriteSymbol
+                                    ]
+                                , HH.text " Write"
+                                ]
+                            ]
+                        , HH.div
+                            [ classes "field" ]
+                            [ HH.label
+                                [ classes "checkbox" ]
+                                [ HH.input
+                                    [ HP.type_ HP.InputCheckbox
+                                    , HP.value $ F.getInput _falseWriteSymbol state.form
+                                    , HE.onValueInput $ F.setValidate _falseTapeMotion
+                                    ]
+                                , HH.text " Move left"
+                                ]
+                            ]
+                        , HH.div
+                            [ classes "field" ]
+                            [ HH.label
+                                [ classes "label" ]
+                                [ HH.text "Next card" ]
+                            , HH.div
+                                [ classes "select" ]
+                                [ HH.select
+                                    [ HE.onValueChange $ F.setValidate _falseNextCardId ]
+                                    $ (HH.option [ HP.value "", classes "is-italic" ] [ HH.text "<Terminate>" ])
+                                    : map (\c -> HH.option_ [ HH.text c ]) (state.cardNames <#> snd)
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
     where
     _name = (Proxy :: Proxy "id")
 
-  handleAction ClickedRemove = H.raise Remove
+    _falseWriteSymbol = (Proxy :: Proxy "falseWriteSymbol")
+
+    _falseTapeMotion = (Proxy :: Proxy "falseTapeMotion")
+
+    _falseNextCardId = (Proxy :: Proxy "falseNextCardId")
+
+    _trueWriteSymbol = (Proxy :: Proxy "trueWriteSymbol")
+
+    _trueTapeMotion = (Proxy :: Proxy "trueTapeMotion")
+
+    _trueNextCardId = (Proxy :: Proxy "trueNextCardId")
+
+  handleEvent = const $ pure unit
+
+  handleAction = case _ of
+    ClickedRemove -> H.raise Remove
+    ChangedName name -> do
+      H.raise $ Name name
+      F.handleAction handleAction handleEvent $ F.setValidate (Proxy :: Proxy "id") name
+    Receive input -> do
+      H.modify_ _ { cardNames = input.cardNames }

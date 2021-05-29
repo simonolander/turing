@@ -1,0 +1,7 @@
+.input[type=text] {
+    max-width: 25em;
+}
+
+.field.block:not(:last-child) {
+    margin-bottom: 1.5em;
+}

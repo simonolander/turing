@@ -20,6 +20,7 @@ import Turing.Component.Html.Utility (navbar)
 import Data.Newtype (wrap)
 import Turing.Component.Html.Utility (section_)
 import Turing.Component.Html.Utility (container_)
+import Turing.Component.Html.Utility (classes)
 
 type State
   = { programId :: ProgramId
@@ -54,26 +55,29 @@ component = H.mkComponent { initialState, render, eval }
     }
 
   render :: State -> HH.HTML (H.ComponentSlot Slots m Action) Action
-  render state = remoteData state.program "program" state.programId renderProgram
+  render state =
+    HH.div_
+      [ navbar
+      , section_
+          [ container_
+              [ HH.div
+                  [ classes "block" ]
+                  [ HH.h1
+                      [ HP.classes $ wrap <$> [ "title" ] ]
+                      [ HH.text "Program" ]
+                  , HH.h2
+                      [ HP.classes $ wrap <$> [ "subtitle", "is-6", "is-family-monospace" ] ]
+                      [ HH.text state.programId ]
+                  ]
+              , remoteData state.program "program" state.programId renderProgram
+              ]
+          ]
+      ]
     where
     renderProgram :: Program -> HH.HTML (H.ComponentSlot Slots m Action) Action
     renderProgram program =
       HH.div_
-        [ navbar
-        , section_
-            [ container_
-                [ HH.h1
-                    [ HP.classes $ wrap <$> [ "title" ] ]
-                    [ HH.text "Program" ]
-                , HH.h2
-                    [ HP.classes $ wrap <$> [ "subtitle", "is-6", "is-family-monospace" ] ]
-                    [ HH.text program.id ]
-                , HH.h4
-                    [ HP.classes $ wrap <$> [ "title", "is-6" ] ]
-                    [ HH.text "Name" ]
-                ]
-            ]
-        , remoteData state.spec "spec" program.specId
+        [ remoteData state.spec "spec" program.specId
             (\spec -> HH.slot F._formless unit PF.component { program, spec } HandleProgramForm)
         ]
 

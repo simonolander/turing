@@ -1,27 +1,35 @@
 module Turing.Component.Form.Program where
 
 import Prelude
-import Data.Array ((:))
+import Data.Array (snoc, (:))
+import Data.Array as Array
 import Data.Const (Const)
 import Data.Either (Either(..))
+import Data.Foldable (maximum)
 import Data.Map (Map)
 import Data.Map as Map
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Newtype (class Newtype)
 import Data.String as String
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
+import Effect.Class.Console (log)
 import Formless as F
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Turing.Component.Form.Card as CardForm
+import Turing.Component.Html.Utility (classes, section_)
 import Turing.Data.Card (Card, CardId)
 import Turing.Data.Program (Program)
 import Turing.Data.Spec (Spec)
 import Type.Proxy (Proxy(..))
+import Data.Tuple (fst)
+import Data.Array (findIndex)
+import Data.Array (modifyAt)
+import Data.Bifunctor (rmap)
 
 newtype ProgramForm (r :: Row Type -> Type) f
   = ProgramForm
@@ -57,6 +65,11 @@ data Action
   = ClickedNewCard
   | HandleCardForm Int CardForm.Message
 
+type State
+  = ( cardNames :: Array (Tuple Int String)
+    , nextCardId :: Int
+    )
+
 component ::
   forall query m.
   MonadEffect m =>
@@ -70,7 +83,7 @@ component =
         , handleAction = handleAction
         }
   where
-  mkInput :: Input -> _
+  mkInput :: Input -> F.Input ProgramForm State m
   mkInput input =
     { validators:
         ProgramForm
@@ -82,53 +95,74 @@ component =
                 trimmedName -> Right trimmedName
           , deck: F.hoistFn_ $ const Map.empty
           }
-    , initialInputs:
-        Just
-          $ F.wrapInputFields
-              { id: input.program.id
-              , specId: input.spec.id
-              , name: input.program.name
-              , deck: ""
-              }
-    , formIds: []
-    , nextId: 0
+    , initialInputs: Nothing
+    , cardNames: []
+    , nextCardId: 1
     }
 
   render state =
-    HH.div_
-      [ HH.p_
-          [ HH.label_
-              [ HH.text "Name"
-              , HH.input
-                  [ HP.value $ F.getInput _name state.form
-                  , HE.onValueInput $ F.setValidate _name
-                  ]
-              , HH.text case F.getError _name state.form of
-                  Just EmptyName -> "Name cannot be empty"
-                  Nothing -> ""
-              ]
-          ]
-      , HH.section_
-          [ HH.h2_ [ HH.text "Cards" ]
-          , HH.button
-              [ HE.onClick $ const $ F.injAction ClickedNewCard ]
-              [ HH.text "Add card" ]
-          , if state.formIds == [] then
-              HH.p_ [ HH.text "No cards" ]
-            else
-              HH.div_ $ mkCardForm <$> state.formIds
-          ]
-      , HH.button
-          [ HE.onClick $ const F.submit ]
-          [ HH.text "Save program" ]
-      ]
+    let
+      nameError = F.getError _name state.form
+    in
+      HH.div_
+        [ HH.div
+            [ classes "field block" ]
+            [ HH.label
+                [ classes "label" ]
+                [ HH.text "Name" ]
+            , HH.div
+                [ classes "control" ]
+                [ HH.input
+                    [ classes $ if isJust nameError then "input is-danger" else "input"
+                    , HP.type_ HP.InputText
+                    , HP.placeholder "My program"
+                    , HP.value $ F.getInput _name state.form
+                    , HE.onValueInput $ F.setValidate _name
+                    ]
+                ]
+            , case nameError of
+                Just EmptyName ->
+                  HH.p
+                    [ classes "help is-danger" ]
+                    [ HH.text "Cannot be empty" ]
+                Nothing -> HH.text ""
+            ]
+        , HH.section
+            [ classes "block" ]
+            [ HH.h1
+                [ classes "title is-4" ]
+                [ HH.text "Cards" ]
+            , HH.button
+                [ HE.onClick $ const $ F.injAction ClickedNewCard
+                , classes "button is-info block"
+                ]
+                [ HH.text "Add card" ]
+            , if state.cardNames == [] then
+                HH.div
+                  [ classes "notification is-info is-light block" ]
+                  [ HH.p_ [ HH.text "You have not added any cards to this program." ] ]
+              else
+                HH.div
+                  [ classes "columns is-multiline" ]
+                  $ mkCardForm
+                  <$> state.cardNames
+            ]
+        , HH.button
+            [ HE.onClick $ const F.submit
+            , classes "button is-primary"
+            ]
+            [ HH.text "Save program" ]
+        ]
     where
     _name = (Proxy :: Proxy "name")
 
     _cardForm = (Proxy :: Proxy "cardForm")
 
-    mkCardForm id = do
+    mkCardForm :: Tuple Int String -> _
+    mkCardForm cardName = do
       let
+        id = fst cardName
+
         handler = F.injAction <<< HandleCardForm id
 
         card :: Card
@@ -145,13 +179,40 @@ component =
                 , nextCardId: Just (show id)
                 }
           }
-      HH.slot _cardForm id CardForm.component card handler
+
+        input :: CardForm.Input
+        input = { card, cardNames: state.cardNames }
+      HH.slot _cardForm id CardForm.component input handler
+
+  updateCardNames newCardNames = do
+    H.modify_ _ { cardNames = newCardNames }
 
   handleAction action = case action of
     ClickedNewCard ->
       H.modify_ \state ->
-        state
-          { formIds = state.nextId : state.formIds
-          , nextId = state.nextId + 1
-          }
-    HandleCardForm id CardForm.Remove -> pure unit
+        let
+          cardName = Tuple state.nextCardId (show state.nextCardId)
+        in
+          state
+            { cardNames = state.cardNames `snoc` cardName
+            , nextCardId = state.nextCardId + 1
+            }
+    HandleCardForm id CardForm.Remove -> do
+      H.modify_ \state ->
+        let
+          cardNames = Array.filter (fst >>> notEq id) state.cardNames
+
+          nextCardId = cardNames <#> fst # maximum # fromMaybe 0 # add 1
+        in
+          state
+            { cardNames = cardNames
+            , nextCardId = nextCardId
+            }
+    HandleCardForm id (CardForm.Name name) -> do
+      cardNames <- H.gets _.cardNames
+      let
+        cardNames' =
+          fromMaybe cardNames do
+            index <- findIndex (fst >>> eq id) cardNames
+            modifyAt index (rmap $ const name) cardNames
+      updateCardNames cardNames'
