@@ -10,10 +10,10 @@ import Turing.Data.Program (Program, ProgramId)
 
 class Monad m <= ManageProgram m where
     getProgram :: ProgramId -> m (Either String (Maybe Program))
-    getPrograms :: m (Either String (Array Program))
+--    getPrograms :: m (Either String (Array Program))
     saveProgram :: Program -> m (Either String Unit)
 
 instance manageProgramHalogenM :: ManageProgram m => ManageProgram ( HalogenM state action slots output m ) where
     getProgram = lift <<< getProgram
-    getPrograms = lift getPrograms
+--    getPrograms = lift getPrograms
     saveProgram = lift <<< saveProgram

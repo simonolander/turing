@@ -15,6 +15,7 @@ import Turing.Data.Route (Route(..), route)
 import Turing.Page.Campaign as Campaign
 import Turing.Page.Home as Home
 import Turing.Page.Play as Play
+import Turing.Page.Program as Program
 import Turing.Page.Settings as Settings
 import Turing.Page.Spec as Spec
 import Turing.Page.SpecEditor as SpecEditor
@@ -38,6 +39,7 @@ type Slots =
     , settings :: H.Slot (Const Void) Void Unit
     , play :: H.Slot (Const Void) Void Unit
     , campaign :: H.Slot (Const Void) Void Unit
+    , program :: H.Slot (Const Void) Void Unit
     )
 
 type Input = Unit
@@ -60,6 +62,7 @@ component = H.mkComponent { initialState, render, eval }
             Just (SpecEditor specId) -> HH.slot (Proxy :: _ "specEditor") unit SpecEditor.component specId absurd
             Just (Spec specId) -> HH.slot (Proxy :: _ "spec") unit Spec.component specId absurd
             Just (Campaign campaignId) -> HH.slot (Proxy :: _ "campaign") unit Campaign.component campaignId absurd
+            Just (Program programId) -> HH.slot (Proxy :: _ "program") unit Program.component programId absurd
             Nothing -> HH.text "404 Not found"
 
     eval :: H.HalogenQ Query Action Input ~> H.HalogenM State Action Slots Output AppM

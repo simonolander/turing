@@ -23,6 +23,7 @@ import Effect.Exception as Ex
 import Halogen as H
 import Routing.Duplex (print)
 import Routing.Hash (setHash)
+import Turing.Capability.ManageProgram (class ManageProgram)
 import Turing.Capability.ManageSpec (class ManageSpec)
 import Turing.Capability.Navigate (class Navigate)
 import Turing.Data.Env (Env)
@@ -38,6 +39,7 @@ import Turing.Firebase.QueryDocumentSnapshot as QueryDocumentSnapshot
 import Turing.Firebase.QuerySnapshot as QuerySnapshot
 import Type.Equality (class TypeEquals, from)
 import Unsafe.Coerce (unsafeCoerce)
+import Data.Sequence.Internal (mapmapmap, (<$$>), (<$$$>))
 
 newtype AppM a = AppM (ReaderT Env Aff a)
 
@@ -94,3 +96,26 @@ instance manageSpecAppM :: ManageSpec AppM where
             collectionRef <- Firestore.specsCollection
             CollectionReference.doc collectionRef spec.id
         DocumentReference.set documentRef (encodeJson spec)
+
+instance manageProgramAppM :: ManageProgram AppM where
+    saveProgram program = H.liftAff $ lmap showError <$> try do
+        documentRef <- liftEffect do
+            firestore <- Firestore.firestore
+            collectionRef <- Firestore.collection firestore "programs"
+            CollectionReference.doc collectionRef program.id
+        DocumentReference.set documentRef (encodeJson program)
+
+    getProgram programId = do
+        documentRef <- liftEffect do
+            firestore <- Firestore.firestore
+            collectionRef <- Firestore.collection firestore "programs"
+            CollectionReference.doc collectionRef programId
+        result <- H.liftAff $ try do
+            DocumentReference.get_ documentRef
+        case result of
+            Left error -> pure $ Left $ showError error
+            Right snapshot -> do
+                maybeData <- liftEffect $ DocumentSnapshot._data_ snapshot
+                case maybeData of
+                    Nothing -> pure $ Right Nothing
+                    Just dat -> pure $ lmap show $ decodeJson dat

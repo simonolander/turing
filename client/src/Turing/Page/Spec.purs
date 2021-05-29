@@ -11,20 +11,25 @@ module Turing.Page.Spec where
 import Prelude
 
 import Data.Array (find)
+import Data.Either (isRight)
 import Data.Maybe (Maybe(..))
 import Effect.Class (class MonadEffect)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
-import Network.RemoteData (RemoteData(..))
+import Network.RemoteData (RemoteData(..), fromEither)
+import Turing.Capability.ManageProgram (class ManageProgram, saveProgram)
+import Turing.Capability.Navigate (class Navigate, navigate)
 import Turing.Component.Html.Utility (remoteData)
 import Turing.Data.Campaign (campaigns)
 import Turing.Data.Program (mkProgram)
 import Turing.Data.Spec (Spec, SpecId)
+import Turing.Data.Route (Route(..))
 
 type State =
     { specId :: SpecId
     , spec :: RemoteData String (Maybe Spec)
+    , newProgram :: RemoteData String Unit
     }
 
 type Input = SpecId
@@ -33,13 +38,19 @@ data Action
     = Initialize
     | ClickedCreateProgram
 
-component :: forall query output m. MonadEffect m => H.Component query Input output m
+component
+    :: forall query output m
+     . MonadEffect m
+    => ManageProgram m
+    => Navigate m
+    => H.Component query Input output m
 component = H.mkComponent { initialState, render, eval }
     where
     initialState :: Input -> State
     initialState specId =
         { specId
         , spec: NotAsked
+        , newProgram: NotAsked
         }
 
     render :: forall slots. State -> HH.HTML (H.ComponentSlot slots m Action) Action
@@ -82,5 +93,9 @@ component = H.mkComponent { initialState, render, eval }
             case specRD of
                 Success (Just spec) -> do
                     program <- H.liftEffect $ mkProgram spec
-                    pure unit
+                    H.modify_ _ { newProgram = Loading }
+                    result <- saveProgram program
+                    H.modify_ _ { newProgram = fromEither result }
+                    when (isRight result) do
+                        navigate $ Program program.id
                 _ -> pure unit

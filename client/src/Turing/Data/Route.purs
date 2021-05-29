@@ -9,6 +9,7 @@ import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
 import Turing.Data.Campaign (CampaignId)
 import Turing.Data.Spec (SpecId)
+import Turing.Data.Program (ProgramId)
 
 data Route
     = Home
@@ -18,6 +19,7 @@ data Route
     | Settings
     | SpecEditor SpecId
     | Spec SpecId
+    | Program ProgramId
 
 derive instance genericRoute :: Generic Route _
 derive instance eqRoute :: Eq Route
@@ -32,5 +34,6 @@ route = root $ sum
     , "Campaign": "campaign" / segment
     , "SpecEditor": "specs" / segment
     , "Spec": "spec" / segment
+    , "Program": "program" / segment
     , "Settings": "settings" / noArgs
     }
